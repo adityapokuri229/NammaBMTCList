@@ -117,7 +117,7 @@ function renderGrid() {
     const entry = ROUTES[k];
     const name = Array.isArray(entry) ? entry[0].name : entry.name;
     return name.toLowerCase().replace(/[-\s]/g, '').includes(q);
-  }).slice(0, 200);
+  });
 
   const grid = document.getElementById('route-grid');
   document.getElementById('route-count').textContent = keys.length;
