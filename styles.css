@@ -642,7 +642,7 @@ html, body {
   font-weight: 600;
   font-size: 10px;
   color: #52525b; /* Dark zinc gray */
-  opacity: 0.15;
+  opacity: 0.5;
   pointer-events: none;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -675,7 +675,7 @@ html, body {
 
   #author-credit {
     bottom: 84px;
-    opacity: 0.1;
+    opacity: 0.4;
   }
 
   #map-controls {
