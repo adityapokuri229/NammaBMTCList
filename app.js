@@ -174,7 +174,7 @@ function setViewMode(mode) {
 }
 
 function initMap() {
-  map = L.map('map-view').setView([12.9716, 77.5946], 11);
+  map = L.map('map-view').setView([12.9716, 77.5946], 10);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     subdomains: 'abcd',
@@ -199,8 +199,11 @@ function renderMap() {
 
   const bounds = L.latLngBounds();
   
-  // Display point cloud (stops) if displaying >20 routes to prevent messy zigzag lines across the city
-  const isGlobalView = keys.length > 20;
+  // Display point cloud (stops) if no explicit text search is active.
+  const isGlobalView = currentSearch.trim() === '';
+  
+  const activeRouteUI = document.getElementById('map-active-route');
+  if (activeRouteUI) activeRouteUI.style.display = 'none';
 
   if (isGlobalView) {
     let plottedStops = new Set();
@@ -234,47 +237,97 @@ function renderMap() {
     }
   } else {
     // Focused view: Draw exact paths and individual stop tracking nodes
+    let drawnRoutes = 0;
+    let displayRoute = null;
+    
     for (let k of keys) {
+      if (drawnRoutes > 20) break; // Hard cap on heavily queried text searches!
       const data = ROUTES[k];
       const variants = Array.isArray(data) ? data : [data];
       const color = getCardColor(getCategory(k), k);
       
-      variants.forEach((v, vIndex) => {
-        const stops = v.stops || [];
-        let path = [];
+      // Select the primary variant by choosing the one with the most stops to prevent 2-stop broken variants from taking precedence
+      let v = variants[0]; 
+      for (let i = 1; i < variants.length; i++) {
+        if (variants[i].stops && v.stops && variants[i].stops.length > v.stops.length) {
+          v = variants[i];
+        }
+      }
+      
+      const exactMatch = k.replace(/[-\s]/g, '').toLowerCase() === q;
+      if (!displayRoute && (keys.length === 1 || exactMatch)) {
+         displayRoute = `<span style="color:${color}">${k}</span> <span style="font-weight:500;color:var(--text-muted)">${escHtml(v.name.replace(/⇔/g, '→'))}</span>`;
+      }
+      
+      const stops = v.stops || [];
+      let validStops = [];
+      
+      for (let idx = 0; idx < stops.length; idx++) {
+        const s = stops[idx];
+        if (STOPS_LOC[s]) {
+          validStops.push({ name: s, pt: [STOPS_LOC[s][0], STOPS_LOC[s][1]], idx });
+        }
+      }
+      
+      // OUTLIER SPIKE FILTER: Remove stops that shoot massive distances out and back due to generic name collisions (like 'Temple' or 'Cross') mapped to incorrect coordinates
+      let filteredStops = [];
+      for (let i = 0; i < validStops.length; i++) {
+        const curr = validStops[i].pt;
+        const prev = i > 0 ? validStops[i-1].pt : null;
+        const next = i < validStops.length - 1 ? validStops[i+1].pt : null;
         
-        for (let idx = 0; idx < stops.length; idx++) {
-          const s = stops[idx];
-          if (STOPS_LOC[s]) {
-            const pt = [STOPS_LOC[s][0], STOPS_LOC[s][1]];
-            path.push(pt);
-            
-            // Draw every stop natively
-            L.circleMarker(pt, {
-              radius: 4,
-              color: '#0a0a0f',
-              weight: 1.5,
-              fillColor: color,
-              fillOpacity: 1
-            })
-            .bindTooltip(`<div style="font-family: 'Inter', sans-serif;"><b>${s}</b><br/><span style="color:#52525b">Stop ${idx + 1} • Route ${k}</span></div>`, { direction: 'top', offset: [0, -4] })
-            .addTo(mapLayerGroup);
-            
-            bounds.extend(pt);
-          }
+        let isOutlier = false;
+        if (prev && next) {
+          const d1 = Math.hypot(curr[0] - prev[0], curr[1] - prev[1]);
+          const d2 = Math.hypot(next[0] - curr[0], next[1] - curr[1]);
+          // If jumping > 4.5km out and > 4.5km back for a completely isolated single stop, it's a naming collision
+          if (d1 > 0.04 && d2 > 0.04) isOutlier = true;
+        } else if (prev && !next) {
+           const d1 = Math.hypot(curr[0] - prev[0], curr[1] - prev[1]);
+           if (d1 > 0.08) isOutlier = true; // 9km terminal jump
+        } else if (!prev && next) {
+           const d2 = Math.hypot(next[0] - curr[0], next[1] - curr[1]);
+           if (d2 > 0.08) isOutlier = true;
         }
         
-        if (path.length > 1) {
-          const isVariant = vIndex > 0;
-          L.polyline(path, { color: color, weight: isVariant ? 2 : 4, opacity: isVariant ? 0.5 : 0.8, dashArray: isVariant ? '5, 8' : '' })
-            .addTo(mapLayerGroup)
-            .bindTooltip(`<div style="font-family: 'Inter', sans-serif;"><b>${k}</b><br/>${v.name.replace(/⇔/g, '→')}</div>`, { sticky: true });
-        }
-      });
+        if (!isOutlier) filteredStops.push(validStops[i]);
+      }
+      
+      let path = [];
+      for (let node of filteredStops) {
+        path.push(node.pt);
+        
+        L.circleMarker(node.pt, {
+          radius: 4,
+          color: '#0a0a0f',
+          weight: 1.5,
+          fillColor: color,
+          fillOpacity: 1
+        })
+        .bindTooltip(`<div style="font-family: 'Inter', sans-serif;"><b>${node.name}</b><br/><span style="color:#52525b">Stop ${node.idx + 1} • Route ${k}</span></div>`, { direction: 'top', offset: [0, -4] })
+        .addTo(mapLayerGroup);
+        
+        bounds.extend(node.pt);
+      }
+      
+      if (path.length > 1) {
+        L.polyline(path, { color: color, weight: 4, opacity: 0.8 }).addTo(mapLayerGroup);
+      }
+      
+      drawnRoutes++;
+    }
+    
+    if (displayRoute && activeRouteUI) {
+      activeRouteUI.innerHTML = displayRoute;
+      activeRouteUI.style.display = 'flex';
     }
   }
   
-  if (bounds.isValid()) {
+  if (isGlobalView) {
+    // Prevent giant zoom-outs caused by outlier bus stops at the edge of the state
+    map.setView([12.9716, 77.5946], 10);
+  } else if (bounds.isValid()) {
+    // Zoom tightly to the exact focused bus route
     map.fitBounds(bounds, { padding: [30, 30] });
   }
 }
@@ -380,10 +433,37 @@ function launchMaps() {
 document.getElementById('map-stop-search').addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const resBox = document.getElementById('map-stop-results');
-  if(!q) { resBox.classList.remove('active'); return; }
+  const clearBtn = document.getElementById('map-search-clear');
+  
+  clearBtn.style.display = q ? 'flex' : 'none';
+  
+  if(!q) { 
+    resBox.classList.remove('active'); 
+    if (focusedStopLayer && map.hasLayer(focusedStopLayer)) {
+      map.removeLayer(focusedStopLayer);
+    }
+    focusedStopLayer = null;
+    return; 
+  }
+  
+  let validStops = null;
+  if (currentCat !== 'all') {
+    validStops = new Set();
+    for (const k of allKeys) {
+      if (getCategory(k) === currentCat) {
+        const variants = Array.isArray(ROUTES[k]) ? ROUTES[k] : [ROUTES[k]];
+        variants.forEach(v => {
+          if (v.stops) v.stops.forEach(s => validStops.add(s));
+        });
+      }
+    }
+  }
   
   const matches = Object.keys(STOPS_LOC)
-    .filter(s => s.toLowerCase().includes(q))
+    .filter(s => {
+      if (validStops && !validStops.has(s)) return false;
+      return s.toLowerCase().includes(q);
+    })
     .slice(0, 50);
     
   if(matches.length === 0) {
@@ -400,14 +480,26 @@ function flyToStop(stopName) {
   const pt = STOPS_LOC[stopName];
   if (pt && map) {
     map.flyTo([pt[0], pt[1]], 16);
+    
+    if (focusedStopLayer && map.hasLayer(focusedStopLayer)) {
+      map.removeLayer(focusedStopLayer);
+    }
+    
     focusedStopLayer = L.circleMarker([pt[0], pt[1]], {
       radius: 8, color: '#10b981', weight: 2, fillColor: '#10b981', fillOpacity: 0.4
-    }).addTo(mapLayerGroup).bindTooltip(`<div style="font-family:'Inter',sans-serif"><b>${escHtml(stopName)}</b></div>`, {direction:'top', permanent: true, offset: [0, -4]}).openTooltip();
+    }).addTo(map).bindTooltip(`<div style="font-family:'Inter',sans-serif"><b>${escHtml(stopName)}</b></div>`, {direction:'top', permanent: true, offset: [0, -4]}).openTooltip();
     
-    document.getElementById('map-stop-search').value = '';
+    document.getElementById('map-stop-search').value = stopName;
     document.getElementById('map-stop-results').classList.remove('active');
   }
 }
+
+document.getElementById('map-stop-search').addEventListener('blur', () => {
+    // delay removing active class to allow click to register
+    setTimeout(() => {
+       document.getElementById('map-stop-results').classList.remove('active');
+    }, 200);
+});
 
 document.addEventListener('click', e => {
   if (!e.target.closest('#map-controls')) {
@@ -415,15 +507,75 @@ document.addEventListener('click', e => {
   }
 });
 
+function clearMapSearch() {
+  const input = document.getElementById('map-stop-search');
+  input.value = '';
+  input.dispatchEvent(new Event('input'));
+  input.focus();
+}
+
+function clearMainSearch() {
+  const input = document.getElementById('search');
+  input.value = '';
+  input.dispatchEvent(new Event('input'));
+  input.focus();
+}
+
+function selectMainSearch(k) {
+  const input = document.getElementById('search');
+  input.value = k;
+  document.getElementById('main-search-results').classList.remove('active');
+  input.dispatchEvent(new Event('input'));
+}
+
 document.getElementById('search').addEventListener('input', e => {
-  currentSearch = e.target.value;
+  currentSearch = e.target.value.trim();
+  const q = currentSearch.toLowerCase();
+  const resBox = document.getElementById('main-search-results');
+  const clearBtn = document.getElementById('main-search-clear');
+  
+  clearBtn.style.display = q ? 'flex' : 'none';
+  
+  if (!q) {
+    resBox.classList.remove('active');
+  } else {
+    const qClean = q.replace(/[-\s]/g, '');
+    const matchedKeys = allKeys.filter(k => {
+      if (currentCat !== 'all' && getCategory(k) !== currentCat) return false;
+      if (k.toLowerCase().replace(/[-\s]/g, '').includes(qClean)) return true;
+      const entry = ROUTES[k];
+      const name = Array.isArray(entry) ? entry[0].name : entry.name;
+      return name.toLowerCase().replace(/[-\s]/g, '').includes(qClean);
+    }).slice(0, 10);
+    
+    if (matchedKeys.length === 0) {
+      resBox.innerHTML = '<div class="map-stop-item" style="color:#ef4444">No active routes found</div>';
+    } else {
+      resBox.innerHTML = matchedKeys.map(k => {
+        const data = ROUTES[k];
+        const name = Array.isArray(data) ? data[0].name : data.name;
+        const color = getCardColor(getCategory(k), k);
+        return `<div class="map-stop-item" style="display:flex;align-items:center;gap:8px" onclick="selectMainSearch('${k.replace(/'/g, "\\'")}')">
+          <span style="color:${color};font-weight:700;white-space:nowrap;flex-shrink:0;">${k}</span> ${escHtml(name.replace(/⇔/g, '→'))}
+        </div>`;
+      }).join('');
+    }
+    resBox.classList.add('active');
+  }
+  
   renderGrid();
   if (viewMode === 'map') renderMap();
 });
 
+document.getElementById('search').addEventListener('blur', () => {
+  setTimeout(() => document.getElementById('main-search-results').classList.remove('active'), 200);
+});
+
+// ── UTILS ─────────────────────────────────────
 function resetView() {
   currentSearch = '';
   document.getElementById('search').value = '';
+  document.getElementById('main-search-clear').style.display = 'none';
   currentCat = 'all';
   renderCategories();
   renderGrid();

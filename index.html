@@ -31,7 +31,7 @@
       <div class="header-content">
         <div id="logo-block">
           <div id="logo" onclick="resetView()">Namma BMTC <span>DB</span></div>
-          <div id="logo-sub">Bangalore Bus Route Directory</div>
+          <div id="logo-sub">Bengaluru Bus Route Directory</div>
         </div>
         
         <div id="search-wrap">
@@ -39,6 +39,10 @@
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
           <input id="search" type="text" placeholder="Search routes, destinations..." autocomplete="off" />
+          <button id="main-search-clear" class="btn-clear" onclick="clearMainSearch()" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div id="main-search-results"></div>
         </div>
 
         <div id="view-toggle">
@@ -71,8 +75,15 @@
       </div> <!-- end list-view -->
       
       <div id="map-view" style="display:none;">
+        <div id="map-active-route" style="position:absolute; top:16px; left:64px; z-index:1000; background:var(--bg-surface); padding:8px 12px; border-radius:var(--radius-md); border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.5); display:none; font-family:var(--font-sans); color:var(--text-main); font-weight:600; font-size:14px; align-items:center; gap:8px;"></div>
         <div id="map-controls">
+          <svg style="position: absolute; left: 12px; top: 12px; width: 15px; height: 15px; color: var(--text-muted); z-index: 10; pointer-events: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
           <input type="text" id="map-stop-search" placeholder="Locate a stop on map..." autocomplete="off"/>
+          <button id="map-search-clear" class="btn-clear" onclick="clearMapSearch()" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
           <div id="map-stop-results"></div>
         </div>
       </div>
