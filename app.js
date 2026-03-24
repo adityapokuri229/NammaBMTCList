@@ -14,6 +14,8 @@ let viewMode = 'list';
 let map = null;
 let mapLayerGroup = null;
 let focusedStopLayer = null;
+let currentGridKeys = [];
+let gridRenderCount = 0;
 
 // ── CATEGORIES DATA ───────────────────────────
 const CATS = [
@@ -110,7 +112,7 @@ function renderCategories() {
 // ── RENDER GRID ───────────────────────────────
 function renderGrid() {
   const q = currentSearch.toLowerCase().replace(/[-\s]/g, '');
-  const keys = allKeys.filter(k => {
+  currentGridKeys = allKeys.filter(k => {
     if (currentCat !== 'all' && getCategory(k) !== currentCat) return false;
     if (!q) return true;
     if (k.toLowerCase().replace(/[-\s]/g, '').includes(q)) return true;
@@ -120,9 +122,11 @@ function renderGrid() {
   });
 
   const grid = document.getElementById('route-grid');
-  document.getElementById('route-count').textContent = keys.length;
+  document.getElementById('route-count').textContent = currentGridKeys.length;
+  grid.innerHTML = '';
+  gridRenderCount = 0;
 
-  if (keys.length === 0) {
+  if (currentGridKeys.length === 0) {
     grid.innerHTML = `
       <div id="empty-state" style="grid-column: 1 / -1; padding: 60px 0; text-align: center;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:40px;color:#52525b;margin-bottom:16px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -131,7 +135,16 @@ function renderGrid() {
     return;
   }
 
-  grid.innerHTML = keys.map(k => {
+  loadMoreGridItems();
+}
+
+function loadMoreGridItems() {
+  if (gridRenderCount >= currentGridKeys.length) return;
+  
+  const grid = document.getElementById('route-grid');
+  const batch = currentGridKeys.slice(gridRenderCount, gridRenderCount + 50);
+  
+  const html = batch.map(k => {
     const data = ROUTES[k];
     const variants = Array.isArray(data) ? data : [data];
     const name = variants[0].name.replace(/⇔/g, '→');
@@ -153,7 +166,16 @@ function renderGrid() {
       </div>
     `;
   }).join('');
+  
+  grid.insertAdjacentHTML('beforeend', html);
+  gridRenderCount += batch.length;
 }
+
+document.getElementById('list-view').addEventListener('scroll', function() {
+  if (this.scrollTop + this.clientHeight >= this.scrollHeight - 300) {
+    loadMoreGridItems();
+  }
+});
 
 // ── MAP RENDERING ─────────────────────────────
 function setViewMode(mode) {
@@ -410,23 +432,16 @@ function launchMaps() {
   const stops = (variants[currentVariant] || variants[0]).stops || [];
   if (stops.length < 2) return;
   
-  const routeStops = [stops[0]];
-  const middleStops = stops.slice(1, -1);
+  const getLoc = (s) => STOPS_LOC[s] ? `${STOPS_LOC[s][0]},${STOPS_LOC[s][1]}` : encodeURIComponent(s + ', Bengaluru');
   
-  if (middleStops.length > 0) {
-    if (middleStops.length <= 8) {
-      routeStops.push(...middleStops);
-    } else {
-      const step = middleStops.length / 8;
-      for (let i = 0; i < 8; i++) {
-        routeStops.push(middleStops[Math.floor(i * step)]);
-      }
-    }
-  }
-  routeStops.push(stops[stops.length - 1]);
+  const origin = getLoc(stops[0]);
+  const dest = getLoc(stops[stops.length - 1]);
   
-  const pathParts = routeStops.map(s => encodeURIComponent(s + ', Bangalore')).join('/');
-  window.open(`https://www.google.com/maps/dir/${pathParts}/data=!4m2!4m1!3e0`, '_blank');
+  const step = Math.max(1, Math.ceil(stops.length / 20));
+  const waypointsList = stops.slice(1, -1).filter((_, i) => i % step === 0).slice(0, 20);
+  const waypoints = waypointsList.map(s => getLoc(s)).join('|');
+  
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=driving`, '_blank');
 }
 
 // ── SEARCH & MAP CONTROLS ─────────────────────
