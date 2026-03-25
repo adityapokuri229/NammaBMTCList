@@ -136,6 +136,9 @@ function renderGrid() {
   document.getElementById('route-count').textContent = currentGridKeys.length;
   grid.innerHTML = '';
   gridRenderCount = 0;
+  
+  // Reset scroll to top upon filter/tab change
+  document.getElementById('list-view').scrollTo(0, 0);
 
   if (currentGridKeys.length === 0) {
     grid.innerHTML = `
