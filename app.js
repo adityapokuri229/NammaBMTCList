@@ -3,6 +3,8 @@
 // ══════════════════════════════════════════════
 
 // ── STATE ─────────────────────────────────────
+const SHOW_VARIANTS = false; // Toggle to true to show all recorded route variants
+
 let ROUTES = {};
 let allKeys = [];
 let STOPS_LOC = {};
@@ -62,6 +64,15 @@ Promise.all([
   fetch('./locations.json').then(r => { if (!r.ok) throw new Error('Failed to load locations'); return r.json(); })
 ]).then(([routesData, locsData]) => {
   ROUTES = routesData;
+  Object.keys(ROUTES).forEach(k => {
+    if (Array.isArray(ROUTES[k])) {
+      ROUTES[k].sort((a,b) => (b.stops?.length || 0) - (a.stops?.length || 0));
+      if (!SHOW_VARIANTS) {
+        ROUTES[k] = [ROUTES[k][0]];
+      }
+    }
+  });
+
   STOPS_LOC = locsData;
   allKeys = Object.keys(ROUTES).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
@@ -441,7 +452,7 @@ function launchMaps() {
   const waypointsList = stops.slice(1, -1).filter((_, i) => i % step === 0).slice(0, 20);
   const waypoints = waypointsList.map(s => getLoc(s)).join('|');
   
-  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=driving`, '_blank');
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`, '_blank');
 }
 
 // ── SEARCH & MAP CONTROLS ─────────────────────
