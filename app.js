@@ -81,13 +81,11 @@ Promise.all([
 
   renderCategories();
   
-  if (window.location.pathname.includes('map.html')) {
+  if (document.getElementById('map-view')) {
     viewMode = 'map';
-    if (document.getElementById('map-view')) {
-      if (!map) initMap();
-      renderMap();
-      if (map) setTimeout(() => map.invalidateSize(), 50);
-    }
+    if (!map) initMap();
+    renderMap();
+    if (map) setTimeout(() => map.invalidateSize(), 50);
   } else {
     renderGrid();
   }
