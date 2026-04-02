@@ -1,105 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Namma BMTC DB - Minimal Bangalore Bus Directory</title>
+  <title>Namma BMTC DB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <meta name="description" content="Browse 2000+ BMTC bus routes across Bangalore. Search by route number, filter by category, and view stop sequences." />
-  
+  <meta name="description"
+    content="Browse 2000+ BMTC bus routes across Bangalore. Search by route number, filter by category, and view stop sequences." />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      background: var(--bg-base);
+    }
+
+    .landing-container {
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .hero-logo {
+      font-family: var(--font-display);
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .hero-logo span {
+      color: var(--accent-base);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 56px;
+      letter-spacing: 0.02em;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .option-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      text-decoration: none;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--card-color, var(--text-dim));
+      transition: height var(--transition);
+    }
+
+    .option-card:hover {
+      transform: translateY(-4px);
+      background: var(--bg-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .option-card:hover::before {
+      height: 6px;
+      box-shadow: 0 0 16px var(--card-color, var(--text-dim));
+    }
+
+    .option-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 24px;
+      color: var(--card-color, var(--text-muted));
+      transition: transform var(--transition);
+    }
+
+    .option-card:hover .option-icon {
+      transform: scale(1.1);
+    }
+
+    .option-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .option-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .hero-logo {
+        font-size: 40px;
+      }
+
+      .hero-sub {
+        margin-bottom: 40px;
+      }
+
+      .option-card {
+        padding: 32px 24px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <!-- LOADING -->
-  <div id="loading">
-    <div class="spinner"></div>
-    <h2>Loading Directory</h2>
-    <p>Phase 2026 dataset</p>
+  <div class="landing-container">
+    <div class="hero-logo">Namma BMTC <span>DB</span></div>
+    <div class="hero-sub">A Minimal Bengaluru Bus Route Directory</div>
+
+    <div class="options-grid">
+      <a href="map.html" class="option-card" style="--card-color: #10b981;">
+        <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+          <line x1="9" y1="3" x2="9" y2="18"></line>
+          <line x1="15" y1="6" x2="15" y2="21"></line>
+        </svg>
+        <div class="option-title">Map View</div>
+        <div class="option-desc">Interactive geographic map displaying all stops and precise routes visually.</div>
+      </a>
+
+      <a href="list.html" class="option-card" style="--card-color: #10b981;">
+        <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"></line>
+          <line x1="8" y1="12" x2="21" y2="12"></line>
+          <line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line>
+          <line x1="3" y1="12" x2="3.01" y2="12"></line>
+          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        </svg>
+        <div class="option-title">List View</div>
+        <div class="option-desc">Search, filter, and browse details of over 2000+ BMTC buses.</div>
+      </a>
+    </div>
   </div>
 
-  <!-- APP -->
-  <div id="app" style="display:none">
-
-    <!-- HEADER -->
-    <header id="header">
-      <div class="header-content">
-        <div id="logo-block">
-          <div id="logo" onclick="resetView()">Namma BMTC <span>DB</span></div>
-          <div id="logo-sub">Bengaluru Bus Route Directory</div>
-        </div>
-        
-        <div id="search-wrap">
-          <svg id="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input id="search" type="text" placeholder="Search routes, destinations..." autocomplete="off" />
-          <button id="main-search-clear" class="btn-clear" onclick="clearMainSearch()" style="display:none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-          <div id="main-search-results"></div>
-        </div>
-
-        <div id="view-toggle">
-          <button id="btn-list" class="active" onclick="setViewMode('list')">List</button>
-          <button id="btn-map" onclick="setViewMode('map')">Map</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- CATEGORY NAVIGATION -->
-    <nav id="categories-nav">
-      <div class="cat-track" id="cat-list">
-        <!-- Pills injected by JS -->
-      </div>
-    </nav>
-
-    <!-- MAIN CONTENT -->
-    <main id="main">
-      <div id="list-view" class="content-wrapper">
-        <div id="stats-bar">
-          <div id="route-count-display">
-            <span id="route-count">0</span> Routes
-          </div>
-          <div id="live-dot"><span>LIVE</span><div class="pulse"></div></div>
-        </div>
-
-        <div id="route-grid">
-          <!-- Cards injected by JS -->
-        </div>
-      </div> <!-- end list-view -->
-      
-      <div id="map-view" style="display:none;">
-        <div id="map-active-route" style="position:absolute; top:16px; left:64px; z-index:1000; background:var(--bg-surface); padding:8px 12px; border-radius:var(--radius-md); border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.5); display:none; font-family:var(--font-sans); color:var(--text-main); font-weight:600; font-size:14px; align-items:center; gap:8px;"></div>
-        <div id="map-controls">
-          <svg style="position: absolute; left: 12px; top: 12px; width: 15px; height: 15px; color: var(--text-muted); z-index: 10; pointer-events: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-          </svg>
-          <input type="text" id="map-stop-search" placeholder="Locate a stop on map..." autocomplete="off"/>
-          <button id="map-search-clear" class="btn-clear" onclick="clearMapSearch()" style="display:none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-          <div id="map-stop-results"></div>
-        </div>
-      </div>
-      
-      <div id="author-credit">Made by Aditya Pokuri</div>
-    </main>
-    
-    <!-- DETAIL OVERLAY -->
-    <div id="overlay-backdrop" onclick="closeDetail()"></div>
-    <aside id="detail-panel">
-      <!-- Detail content injected by JS -->
-    </aside>
-
-  </div>
-
-  <script src="app.js"></script>
 </body>
+
 </html>

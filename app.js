@@ -80,7 +80,16 @@ Promise.all([
   document.getElementById('app').style.display = 'flex';
 
   renderCategories();
-  renderGrid();
+  
+  if (window.location.pathname.includes('map.html')) {
+    viewMode = 'map';
+    if (document.getElementById('map-view')) {
+      if (!map) initMap();
+      renderMap();
+    }
+  } else {
+    renderGrid();
+  }
 })
   .catch(err => {
     document.getElementById('loading').innerHTML = `
@@ -133,12 +142,16 @@ function renderGrid() {
   });
 
   const grid = document.getElementById('route-grid');
-  document.getElementById('route-count').textContent = currentGridKeys.length;
+  const routeCount = document.getElementById('route-count');
+  if (routeCount) routeCount.textContent = currentGridKeys.length;
+  if (!grid) return;
+  
   grid.innerHTML = '';
   gridRenderCount = 0;
   
   // Reset scroll to top upon filter/tab change
-  document.getElementById('list-view').scrollTo(0, 0);
+  const listView = document.getElementById('list-view');
+  if (listView) listView.scrollTo(0, 0);
 
   if (currentGridKeys.length === 0) {
     grid.innerHTML = `
@@ -156,6 +169,7 @@ function loadMoreGridItems() {
   if (gridRenderCount >= currentGridKeys.length) return;
   
   const grid = document.getElementById('route-grid');
+  if (!grid) return;
   const batch = currentGridKeys.slice(gridRenderCount, gridRenderCount + 50);
   
   const html = batch.map(k => {
@@ -185,27 +199,35 @@ function loadMoreGridItems() {
   gridRenderCount += batch.length;
 }
 
-document.getElementById('list-view').addEventListener('scroll', function() {
-  if (this.scrollTop + this.clientHeight >= this.scrollHeight - 300) {
-    loadMoreGridItems();
-  }
-});
+const listViewScroll = document.getElementById('list-view');
+if (listViewScroll) {
+  listViewScroll.addEventListener('scroll', function() {
+    if (this.scrollTop + this.clientHeight >= this.scrollHeight - 300) {
+      loadMoreGridItems();
+    }
+  });
+}
 
 // ── MAP RENDERING ─────────────────────────────
 function setViewMode(mode) {
   viewMode = mode;
-  document.getElementById('btn-list').classList.toggle('active', mode === 'list');
-  document.getElementById('btn-map').classList.toggle('active', mode === 'map');
+  const btnList = document.getElementById('btn-list');
+  const btnMap = document.getElementById('btn-map');
+  if (btnList) btnList.classList.toggle('active', mode === 'list');
+  if (btnMap) btnMap.classList.toggle('active', mode === 'map');
   
+  const listView = document.getElementById('list-view');
+  const mapView = document.getElementById('map-view');
+
   if (mode === 'list') {
-    document.getElementById('list-view').style.display = 'block';
-    document.getElementById('map-view').style.display = 'none';
+    if (listView) listView.style.display = 'block';
+    if (mapView) mapView.style.display = 'none';
   } else {
-    document.getElementById('list-view').style.display = 'none';
-    document.getElementById('map-view').style.display = 'block';
-    if (!map) initMap();
+    if (listView) listView.style.display = 'none';
+    if (mapView) mapView.style.display = 'block';
+    if (!map && document.getElementById('map-view')) initMap();
     renderMap();
-    setTimeout(() => map.invalidateSize(), 50);
+    if (map) setTimeout(() => map.invalidateSize(), 50);
   }
 }
 
@@ -220,7 +242,7 @@ function initMap() {
 }
 
 function renderMap() {
-  if (!map) return;
+  if (!map || !mapLayerGroup) return;
   mapLayerGroup.clearLayers();
   
   const q = currentSearch.toLowerCase().replace(/[-\s]/g, '');
@@ -459,7 +481,9 @@ function launchMaps() {
 }
 
 // ── SEARCH & MAP CONTROLS ─────────────────────
-document.getElementById('map-stop-search').addEventListener('input', e => {
+const mapStopSearch = document.getElementById('map-stop-search');
+if (mapStopSearch) {
+mapStopSearch.addEventListener('input', e => {
   const q = e.target.value.toLowerCase().trim();
   const resBox = document.getElementById('map-stop-results');
   const clearBtn = document.getElementById('map-search-clear');
@@ -504,6 +528,7 @@ document.getElementById('map-stop-search').addEventListener('input', e => {
   }
   resBox.classList.add('active');
 });
+}
 
 function flyToStop(stopName) {
   const pt = STOPS_LOC[stopName];
@@ -523,21 +548,26 @@ function flyToStop(stopName) {
   }
 }
 
-document.getElementById('map-stop-search').addEventListener('blur', () => {
+if (mapStopSearch) {
+mapStopSearch.addEventListener('blur', () => {
     // delay removing active class to allow click to register
     setTimeout(() => {
-       document.getElementById('map-stop-results').classList.remove('active');
+       const resBox = document.getElementById('map-stop-results');
+       if (resBox) resBox.classList.remove('active');
     }, 200);
 });
+}
 
 document.addEventListener('click', e => {
   if (!e.target.closest('#map-controls')) {
-    document.getElementById('map-stop-results').classList.remove('active');
+    const resBox = document.getElementById('map-stop-results');
+    if (resBox) resBox.classList.remove('active');
   }
 });
 
 function clearMapSearch() {
   const input = document.getElementById('map-stop-search');
+  if (!input) return;
   input.value = '';
   input.dispatchEvent(new Event('input'));
   input.focus();
@@ -545,6 +575,7 @@ function clearMapSearch() {
 
 function clearMainSearch() {
   const input = document.getElementById('search');
+  if (!input) return;
   input.value = '';
   input.dispatchEvent(new Event('input'));
   input.focus();
@@ -552,12 +583,16 @@ function clearMainSearch() {
 
 function selectMainSearch(k) {
   const input = document.getElementById('search');
+  if (!input) return;
   input.value = k;
-  document.getElementById('main-search-results').classList.remove('active');
+  const resBox = document.getElementById('main-search-results');
+  if (resBox) resBox.classList.remove('active');
   input.dispatchEvent(new Event('input'));
 }
 
-document.getElementById('search').addEventListener('input', e => {
+const mainSearch = document.getElementById('search');
+if (mainSearch) {
+mainSearch.addEventListener('input', e => {
   currentSearch = e.target.value.trim();
   const q = currentSearch.toLowerCase();
   const resBox = document.getElementById('main-search-results');
@@ -596,15 +631,21 @@ document.getElementById('search').addEventListener('input', e => {
   if (viewMode === 'map') renderMap();
 });
 
-document.getElementById('search').addEventListener('blur', () => {
-  setTimeout(() => document.getElementById('main-search-results').classList.remove('active'), 200);
+mainSearch.addEventListener('blur', () => {
+  setTimeout(() => {
+    const resBox = document.getElementById('main-search-results');
+    if (resBox) resBox.classList.remove('active');
+  }, 200);
 });
+}
 
 // ── UTILS ─────────────────────────────────────
 function resetView() {
   currentSearch = '';
-  document.getElementById('search').value = '';
-  document.getElementById('main-search-clear').style.display = 'none';
+  const searchInput = document.getElementById('search');
+  if (searchInput) searchInput.value = '';
+  const searchClear = document.getElementById('main-search-clear');
+  if (searchClear) searchClear.style.display = 'none';
   currentCat = 'all';
   renderCategories();
   renderGrid();

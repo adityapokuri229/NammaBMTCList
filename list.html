@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Namma BMTC DB - Minimal Bangalore Bus Directory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="description" content="Browse 2000+ BMTC bus routes across Bangalore. Search by route number, filter by category, and view stop sequences." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- LOADING -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <h2>Loading Directory</h2>
+    <p>Phase 2026 dataset</p>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+
+    <!-- HEADER -->
+    <header id="header">
+      <div class="header-content">
+        <div id="logo-block">
+          <div id="logo" onclick="window.location.href='index.html'">Namma BMTC <span>DB</span></div>
+          <div id="logo-sub">Bengaluru Bus Route Directory</div>
+        </div>
+        
+        <div id="search-wrap">
+          <svg id="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input id="search" type="text" placeholder="Search routes, destinations..." autocomplete="off" />
+          <button id="main-search-clear" class="btn-clear" onclick="clearMainSearch()" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div id="main-search-results"></div>
+        </div>
+
+        <div id="view-toggle">
+          <button id="btn-list" class="active" onclick="window.location.href='list.html'">List</button>
+          <button id="btn-map" onclick="window.location.href='map.html'">Map</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CATEGORY NAVIGATION -->
+    <nav id="categories-nav">
+      <div class="cat-track" id="cat-list">
+        <!-- Pills injected by JS -->
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main">
+      <div id="list-view" class="content-wrapper">
+        <div id="stats-bar">
+          <div id="route-count-display">
+            <span id="route-count">0</span> Routes
+          </div>
+          <div id="live-dot"><span>LIVE</span><div class="pulse"></div></div>
+        </div>
+
+        <div id="route-grid">
+          <!-- Cards injected by JS -->
+        </div>
+      </div> <!-- end list-view -->
+      
+
+      
+      <div id="author-credit">Made by Aditya Pokuri</div>
+    </main>
+    
+    <!-- DETAIL OVERLAY -->
+    <div id="overlay-backdrop" onclick="closeDetail()"></div>
+    <aside id="detail-panel">
+      <!-- Detail content injected by JS -->
+    </aside>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
