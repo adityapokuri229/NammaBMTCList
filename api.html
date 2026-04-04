@@ -133,32 +133,46 @@
     }
 
     .api-hero p {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      max-width: 600px;
+      font-size: 16px;
+      color: #71717a;
+      line-height: 1.8;
+      max-width: 100%;
     }
 
     /* BASE URL CARD */
     .base-url-card {
-      background: rgba(16, 185, 129, 0.05);
-      border: 1px dashed rgba(16, 185, 129, 0.3);
-      border-radius: var(--radius-md);
-      padding: 14px 20px;
+      background: rgba(16, 185, 129, 0.02);
+      border: 1px solid rgba(16, 185, 129, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .base-url-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 36px;
+      width: 100%;
+    }
+
+    .base-url-specs {
+      display: flex;
+      gap: 16px;
       flex-wrap: wrap;
-      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      justify-content: flex-end;
     }
 
     .base-url-label {
       color: #10b981;
       font-weight: 600;
-      font-size: 12px;
+      font-size: 13px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
     }
 
     .base-url-value {
@@ -716,35 +730,35 @@
 
       <div class="api-hero" id="overview">
         <h1>Namma BMTC <span>API</span> Documentation</h1>
-        <p>A free, open REST API for Bengaluru's bus network. Query 2,957 routes, 4,927 stops, and precise
-          geo-coordinates. No auth required.</p>
+        <p>A fast, free, and completely open REST API to query Bengaluru's bus network. Our dataset covers thousands
+          of active routes, stop sequences, and precise latitudes & longitudes.</p>
       </div>
 
       <div class="base-url-card">
-        <div>
+        <div class="base-url-row">
           <div class="base-url-label">Base URL</div>
           <div class="base-url-value">https://nammabmtcdb-api.onrender.com</div>
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+        <div class="base-url-specs">
+          <div style="font-size:9px;color:var(--text-dim);display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:0.05em;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            No auth required
+            No authentication
           </div>
-          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+          <div style="font-size:9px;color:var(--text-dim);display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:0.05em;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
               <polyline points="16 18 22 12 16 6" />
               <polyline points="8 6 2 12 8 18" />
             </svg>
-            JSON responses
+            JSON Format
           </div>
-          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+          <div style="font-size:9px;color:var(--text-dim);display:flex;align-items:center;gap:4px;text-transform:uppercase;letter-spacing:0.05em;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
             </svg>
-            CORS enabled
+            CORS Enabled
           </div>
         </div>
       </div>
