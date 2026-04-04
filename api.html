@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Developer API - Namma BMTC DB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Specific overrides for API documentation */
+    body {
+      background: var(--bg-base);
+      color: var(--text-main);
+      overflow-y: auto !important; /* Allow scroll on body */
+      height: auto;
+    }
+
+    #header {
+      position: sticky;
+      top: 0;
+    }
+
+    .api-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .api-sidebar {
+      width: 250px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 104px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    .api-nav-group {
+      margin-bottom: 24px;
+    }
+
+    .api-nav-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .api-nav-link {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+      margin-bottom: 2px;
+    }
+
+    .api-nav-link:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+    
+    .api-nav-link.active {
+      color: var(--accent-base);
+      background: var(--accent-glow);
+    }
+
+    .api-content {
+      flex: 1;
+      max-width: 860px;
+    }
+
+    .api-header {
+      margin-bottom: 48px;
+    }
+
+    .api-header h1 {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .api-header p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .endpoint-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-bottom: 32px;
+      transition: border-color var(--transition);
+    }
+    
+    .endpoint-card:hover {
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    .endpoint-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .method-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-sans);
+    }
+
+    .method-get {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+    
+    .endpoint-path {
+      color: var(--text-main);
+      word-break: break-all;
+    }
+
+    .endpoint-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .endpoint-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
+
+    .api-table th {
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 600;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .api-table td {
+      padding: 12px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    .param-name {
+      color: #38bdf8;
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .param-type {
+      color: #f472b6;
+      font-size: 11px;
+    }
+    
+    .param-req {
+      color: #fb923c;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .mock-terminal {
+      background: #0a0a0f;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-top: 24px;
+      position: relative;
+    }
+
+    .mock-terminal-header {
+      background: rgba(255,255,255,0.03);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mac-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .mac-dot.r { background: #ef4444; }
+    .mac-dot.y { background: #f59e0b; }
+    .mac-dot.g { background: #10b981; }
+
+    .btn-copy {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition);
+    }
+
+    .btn-copy:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .btn-copy.copied {
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .mock-terminal-body {
+      padding: 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      color: #e4e4e7;
+    }
+
+    .term-prompt { color: #f472b6; margin-right: 8px; }
+    .term-cmd { color: #34d399; }
+    .term-url { color: #60a5fa; text-decoration: underline; }
+    
+    .json-key { color: #38bdf8; }
+    .json-str { color: #34d399; }
+    .json-num { color: #f472b6; }
+    
+    .base-url-card {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    
+    .base-url-label { color: #10b981; font-weight: 600; font-size: 14px; }
+    .base-url-value { font-family: monospace; font-size: 14px; color: var(--text-main); }
+    
+    @media (max-width: 900px) {
+      .api-container {
+        flex-direction: column;
+      }
+      .api-sidebar {
+        width: 100%;
+        position: static;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div id="header">
+    <div class="header-content">
+      <div id="logo-block">
+        <div id="logo" onclick="window.location.href='index.html'">Namma BMTC <span>DB</span></div>
+        <div id="logo-sub">Open REST API</div>
+      </div>
+      <div>
+        <a href="index.html" style="color:var(--text-muted);text-decoration:none;font-size:14px;font-weight:500;transition:0.2s;">Back to App →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="api-container">
+    <div class="api-sidebar">
+      <div class="api-nav-group">
+        <div class="api-nav-title">Meta</div>
+        <a href="#stats" class="api-nav-link">System Stats</a>
+      </div>
+      <div class="api-nav-group">
+        <div class="api-nav-title">Routes</div>
+        <a href="#routes" class="api-nav-link">List Routes</a>
+        <a href="#route-search" class="api-nav-link">Search Routes</a>
+        <a href="#route-detail" class="api-nav-link">Get Route Info</a>
+      </div>
+      <div class="api-nav-group">
+        <div class="api-nav-title">Stops</div>
+        <a href="#stops" class="api-nav-link">List Stops</a>
+        <a href="#stop-nearby" class="api-nav-link">Nearby Stops</a>
+      </div>
+    </div>
+
+    <div class="api-content">
+      <div class="api-header">
+        <h1>Developer API Documentation</h1>
+        <p>A fast, free, and completely open REST API to query Bengaluru's bus network. Our dataset covers thousands of active routes, stop sequences, and precise latitudes & longitudes.</p>
+      </div>
+
+      <div class="base-url-card">
+        <div class="base-url-label">Base URL</div>
+        <div class="base-url-value">https://nammabmtcdb-api.onrender.com</div>
+      </div>
+
+      <!-- ENDPOINTS -->
+
+      <div id="stats" class="endpoint-card">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/stats</span>
+        </div>
+        <div class="endpoint-desc">
+          Retrieve system-wide metadata, tracking the total number of routes, stops, and variants currently active in the database.
+        </div>
+        
+        <div class="mock-terminal">
+          <div class="mock-terminal-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/stats&quot;')">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
+            </button>
+          </div>
+          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/stats"</span>
+
+{
+  <span class="json-key">"total_routes"</span>: <span class="json-num">2104</span>,
+  <span class="json-key">"total_stops"</span>: <span class="json-num">8426</span>,
+  <span class="json-key">"by_category"</span>: {
+    <span class="json-key">"mf"</span>: <span class="json-num">58</span>,
+    <span class="json-key">"airport"</span>: <span class="json-num">17</span>,
+    <span class="json-key">"general"</span>: <span class="json-num">1605</span>
+  }
+}</div>
+        </div>
+      </div>
+
+      <div id="route-search" class="endpoint-card">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/routes/search</span>
+        </div>
+        <div class="endpoint-desc">
+          Search for bus routes using a query string. Matches against route numbers (e.g. "500-D") and route names (e.g. "Hebbal").
+        </div>
+        
+        <div class="endpoint-section-title">Query Parameters</div>
+        <table class="api-table">
+          <tr>
+            <td><span class="param-name">q</span><br><span class="param-req">required</span></td>
+            <td><span class="param-type">string</span></td>
+            <td style="color: var(--text-muted);">The search keyword to look for.</td>
+          </tr>
+          <tr>
+            <td><span class="param-name">category</span></td>
+            <td><span class="param-type">string</span></td>
+            <td style="color: var(--text-muted);">Filter by category ID (e.g., <code>airport</code>, <code>mf</code>, <code>orbital</code>).</td>
+          </tr>
+        </table>
+        
+        <div class="mock-terminal">
+          <div class="mock-terminal-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/routes/search?q=500&amp;limit=1&quot;')">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
+            </button>
+          </div>
+          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/routes/search?q=500&limit=1"</span>
+
+{
+  <span class="json-key">"query"</span>: <span class="json-str">"500"</span>,
+  <span class="json-key">"total"</span>: <span class="json-num">1</span>,
+  <span class="json-key">"routes"</span>: [
+    {
+      <span class="json-key">"route_id"</span>: <span class="json-str">"500-D"</span>,
+      <span class="json-key">"name"</span>: <span class="json-str">"Hebbal to Central Silk Board"</span>,
+      <span class="json-key">"category"</span>: <span class="json-str">"orbital"</span>,
+      <span class="json-key">"stops_count"</span>: <span class="json-num">36</span>,
+      <span class="json-key">"variants_count"</span>: <span class="json-num">2</span>
+    }
+  ]
+}</div>
+        </div>
+      </div>
+
+      <div id="route-detail" class="endpoint-card">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/routes/{route_id}/stops</span>
+        </div>
+        <div class="endpoint-desc">
+          Get the precise sequence of stops for a specific route variant, including exact geographical coordinates.
+        </div>
+        
+        <div class="endpoint-section-title">Path Parameters</div>
+        <table class="api-table">
+          <tr>
+            <td><span class="param-name">route_id</span><br><span class="param-req">required</span></td>
+            <td><span class="param-type">string</span></td>
+            <td style="color: var(--text-muted);">The exact route ID (e.g. <code>500-D</code>).</td>
+          </tr>
+        </table>
+        
+        <div class="mock-terminal">
+          <div class="mock-terminal-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/routes/MF-1A/stops&quot;')">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
+            </button>
+          </div>
+          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/routes/MF-1A/stops"</span>
+
+{
+  <span class="json-key">"route_id"</span>: <span class="json-str">"MF-1A"</span>,
+  <span class="json-key">"variant"</span>: <span class="json-num">0</span>,
+  <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro Station ⇔ Mahadevapura"</span>,
+  <span class="json-key">"stops"</span>: [
+    {
+      <span class="json-key">"sequence"</span>: <span class="json-num">1</span>,
+      <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro Station"</span>,
+      <span class="json-key">"lat"</span>: <span class="json-num">12.985655</span>,
+      <span class="json-key">"lng"</span>: <span class="json-num">77.644919</span>
+    },
+    {
+      <span class="json-key">"sequence"</span>: <span class="json-num">2</span>,
+      <span class="json-key">"name"</span>: <span class="json-str">"Isolation Hospital"</span>,
+      <span class="json-key">"lat"</span>: <span class="json-num">12.986684</span>,
+      <span class="json-key">"lng"</span>: <span class="json-num">77.646549</span>
+    }
+  ]
+}</div>
+        </div>
+      </div>
+      
+      <div id="stops" class="endpoint-card">
+        <div class="endpoint-title">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/stops/nearby</span>
+        </div>
+        <div class="endpoint-desc">
+          Retrieve all bus stops near a specific geographical coordinate, sorted by distance.
+        </div>
+        
+        <div class="endpoint-section-title">Query Parameters</div>
+        <table class="api-table">
+          <tr>
+            <td><span class="param-name">lat</span><br><span class="param-req">required</span></td>
+            <td><span class="param-type">number</span></td>
+            <td style="color: var(--text-muted);">Latitude of the search center.</td>
+          </tr>
+          <tr>
+            <td><span class="param-name">lng</span><br><span class="param-req">required</span></td>
+            <td><span class="param-type">number</span></td>
+            <td style="color: var(--text-muted);">Longitude of the search center.</td>
+          </tr>
+          <tr>
+            <td><span class="param-name">radius</span></td>
+            <td><span class="param-type">number</span></td>
+            <td style="color: var(--text-muted);">Search radius in meters (Default: 500, Max: 5000).</td>
+          </tr>
+        </table>
+        
+        <div class="mock-terminal">
+          <div class="mock-terminal-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/stops/nearby?lat=12.9716&amp;lng=77.5946&amp;radius=200&quot;')">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
+            </button>
+          </div>
+          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/stops/nearby?lat=12.9716&lng=77.5946&radius=200"</span>
+
+{
+  <span class="json-key">"lat"</span>: <span class="json-num">12.9716</span>,
+  <span class="json-key">"lng"</span>: <span class="json-num">77.5946</span>,
+  <span class="json-key">"radius_m"</span>: <span class="json-num">200</span>,
+  <span class="json-key">"total"</span>: <span class="json-num">2</span>,
+  <span class="json-key">"stops"</span>: [
+    {
+      <span class="json-key">"name"</span>: <span class="json-str">"M.A.C.C.O.Society"</span>,
+      <span class="json-key">"lat"</span>: <span class="json-num">12.972306</span>,
+      <span class="json-key">"lng"</span>: <span class="json-num">77.593683</span>,
+      <span class="json-key">"distance_m"</span>: <span class="json-num">126</span>
+    },
+    {
+      <span class="json-key">"name"</span>: <span class="json-str">"St.Marthas Hospital Corporate"</span>,
+      <span class="json-key">"lat"</span>: <span class="json-num">12.971168</span>,
+      <span class="json-key">"lng"</span>: <span class="json-num">77.592965</span>,
+      <span class="json-key">"distance_m"</span>: <span class="json-num">184</span>
+    }
+  ]
+}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function copyCode(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied';
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalContent;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Scroll active link styling
+    const links = document.querySelectorAll('.api-nav-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      document.querySelectorAll('.endpoint-card').forEach(card => {
+        const cardTop = card.offsetTop;
+        if (pageYOffset >= cardTop - 120) {
+          current = card.getAttribute('id');
+        }
+      });
+      
+      links.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

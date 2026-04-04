@@ -28,7 +28,7 @@
     .landing-container {
       text-align: center;
       padding: 40px 24px;
-      max-width: 800px;
+      max-width: 1000px;
       width: 100%;
     }
 
@@ -55,7 +55,7 @@
 
     .options-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 32px;
     }
 
@@ -181,6 +181,16 @@
         </svg>
         <div class="option-title">List View</div>
         <div class="option-desc">Search, filter, and browse details of over 2000+ BMTC buses.</div>
+      </a>
+
+      <a href="api.html" class="option-card" style="--card-color: #06b6d4;">
+        <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+        </svg>
+        <div class="option-title">Open API</div>
+        <div class="option-desc">Developer documentation for the Namma BMTC open REST API platform.</div>
       </a>
     </div>
   </div>
