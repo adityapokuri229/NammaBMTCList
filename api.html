@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Developer API - Namma BMTC DB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-    /* Specific overrides for API documentation */
+    html,
     body {
       background: var(--bg-base);
       color: var(--text-main);
-      overflow-y: auto !important; /* Allow scroll on body */
-      height: auto;
+      overflow-y: auto !important;
+      height: auto !important;
     }
 
     #header {
       position: sticky;
       top: 0;
+      z-index: 100;
     }
 
     .api-container {
-      max-width: 1400px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 32px 24px;
       display: flex;
@@ -34,182 +36,362 @@
       align-items: flex-start;
     }
 
+    /* SIDEBAR */
     .api-sidebar {
-      width: 250px;
+      width: 220px;
       flex-shrink: 0;
       position: sticky;
-      top: 104px;
-      max-height: calc(100vh - 120px);
+      top: 80px;
+      max-height: calc(100vh - 100px);
       overflow-y: auto;
     }
 
     .api-nav-group {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .api-nav-title {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       color: var(--text-dim);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      padding: 0 8px;
     }
 
     .api-nav-link {
       display: flex;
       align-items: center;
-      padding: 8px 12px;
+      gap: 8px;
+      padding: 7px 10px;
       text-decoration: none;
       color: var(--text-muted);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 500;
       border-radius: var(--radius-sm);
       transition: all var(--transition);
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .api-nav-link:hover {
       background: var(--bg-hover);
       color: var(--text-main);
     }
-    
+
     .api-nav-link.active {
       color: var(--accent-base);
       background: var(--accent-glow);
     }
 
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* CONTENT */
     .api-content {
       flex: 1;
-      max-width: 860px;
+      max-width: 900px;
     }
 
-    .api-header {
-      margin-bottom: 48px;
+    .api-hero {
+      margin-bottom: 40px;
     }
 
-    .api-header h1 {
+    .api-hero h1 {
       font-family: var(--font-display);
-      font-size: 40px;
+      font-size: 36px;
       font-weight: 700;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
     }
 
-    .api-header p {
-      font-size: 16px;
+    .api-hero h1 span {
+      color: var(--accent-base);
+    }
+
+    .api-hero p {
+      font-size: 15px;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.7;
+      max-width: 600px;
     }
 
+    /* BASE URL CARD */
+    .base-url-card {
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px dashed rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .base-url-label {
+      color: #10b981;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .base-url-value {
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    /* SECTION HEADING */
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 48px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-heading svg {
+      color: var(--accent-base);
+    }
+
+    /* ENDPOINT CARD */
     .endpoint-card {
       background: var(--bg-surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 32px;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+      overflow: hidden;
       transition: border-color var(--transition);
     }
-    
+
     .endpoint-card:hover {
-      border-color: rgba(255,255,255,0.15);
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
-    .endpoint-title {
+    .endpoint-header {
+      padding: 20px 24px;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 600;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
     }
 
     .method-badge {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       padding: 4px 10px;
       border-radius: 6px;
-      font-family: var(--font-sans);
+      font-family: monospace;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
     .method-get {
       background: rgba(16, 185, 129, 0.15);
       color: #34d399;
     }
-    
+
+    .endpoint-meta {
+      flex: 1;
+    }
+
     .endpoint-path {
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: 600;
       color: var(--text-main);
-      word-break: break-all;
+      margin-bottom: 6px;
+    }
+
+    .endpoint-path .param-seg {
+      color: #f472b6;
     }
 
     .endpoint-desc {
+      font-size: 13px;
       color: var(--text-muted);
-      font-size: 14px;
       line-height: 1.6;
-      margin-bottom: 24px;
     }
 
-    .endpoint-section-title {
-      font-size: 12px;
+    .endpoint-body {
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* PARAMS TABLE */
+    .params-section {
+      margin-top: 20px;
+    }
+
+    .params-label {
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-dim);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
-    .api-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 24px;
-    }
-
-    .api-table th {
-      text-align: left;
-      font-size: 12px;
-      color: var(--text-dim);
-      font-weight: 600;
-      padding: 8px 12px;
+    .param-row {
+      display: grid;
+      grid-template-columns: 160px 80px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 10px 0;
       border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .api-table td {
-      padding: 12px;
       font-size: 13px;
-      border-bottom: 1px solid var(--border-subtle);
-      vertical-align: top;
     }
 
-    .param-name {
-      color: #38bdf8;
+    .param-row:last-child {
+      border-bottom: none;
+    }
+
+    .param-name-cell {
       font-family: monospace;
+      color: #38bdf8;
       font-weight: 600;
     }
 
-    .param-type {
-      color: #f472b6;
-      font-size: 11px;
-    }
-    
-    .param-req {
+    .param-req-badge {
+      font-size: 10px;
+      font-weight: 700;
       color: #fb923c;
-      font-size: 11px;
-      font-weight: 600;
+      background: rgba(251, 146, 60, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 3px;
     }
 
-    .mock-terminal {
-      background: #0a0a0f;
-      border: 1px solid var(--border);
+    .param-opt-badge {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+
+    .param-type-cell {
+      color: #a78bfa;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .param-desc {
+      color: var(--text-muted);
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.07);
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #e4e4e7;
+    }
+
+    /* INTERACTIVE BUILDER */
+    .builder-section {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
       overflow: hidden;
-      margin-top: 24px;
-      position: relative;
     }
 
-    .mock-terminal-header {
-      background: rgba(255,255,255,0.03);
+    .builder-header {
       padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .builder-header svg {
+      color: var(--accent-base);
+    }
+
+    .builder-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .builder-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .builder-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 70px;
+    }
+
+    .builder-input,
+    .builder-select {
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color var(--transition);
+      min-width: 220px;
+    }
+
+    .builder-input:focus,
+    .builder-select:focus {
+      border-color: var(--accent-base);
+    }
+
+    .builder-select option {
+      background: #1a1a2e;
+    }
+
+    .builder-input-sm {
+      min-width: 110px;
+    }
+
+    /* URL DISPLAY */
+    .url-display {
+      margin-top: 4px;
+      background: #0a0a0f;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .url-display-header {
+      padding: 8px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -218,37 +400,45 @@
 
     .mac-dots {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
 
     .mac-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
     }
-    .mac-dot.r { background: #ef4444; }
-    .mac-dot.y { background: #f59e0b; }
-    .mac-dot.g { background: #10b981; }
+
+    .mac-dot.r {
+      background: #ef4444;
+    }
+
+    .mac-dot.y {
+      background: #f59e0b;
+    }
+
+    .mac-dot.g {
+      background: #10b981;
+    }
 
     .btn-copy {
       background: transparent;
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      padding: 4px 10px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: 5px;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all var(--transition);
     }
 
     .btn-copy:hover {
       background: var(--bg-hover);
       color: var(--text-main);
-      border-color: var(--border);
     }
 
     .btn-copy.copied {
@@ -257,318 +447,1468 @@
       background: rgba(16, 185, 129, 0.1);
     }
 
-    .mock-terminal-body {
-      padding: 16px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 13px;
-      line-height: 1.6;
+    .url-display-body {
+      padding: 14px 16px;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.7;
       overflow-x: auto;
       color: #e4e4e7;
+      word-break: break-all;
     }
 
-    .term-prompt { color: #f472b6; margin-right: 8px; }
-    .term-cmd { color: #34d399; }
-    .term-url { color: #60a5fa; text-decoration: underline; }
-    
-    .json-key { color: #38bdf8; }
-    .json-str { color: #34d399; }
-    .json-num { color: #f472b6; }
-    
-    .base-url-card {
-      background: rgba(16, 185, 129, 0.05);
-      border: 1px dashed rgba(16, 185, 129, 0.3);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
+    .url-base {
+      color: #94a3b8;
+    }
+
+    .url-path {
+      color: #34d399;
+    }
+
+    .url-param-key {
+      color: #38bdf8;
+    }
+
+    .url-param-val {
+      color: #f472b6;
+    }
+
+    .url-sep {
+      color: #52525b;
+    }
+
+    /* RESPONSE EXAMPLE */
+    .response-section {
+      margin-top: 16px;
+    }
+
+    .response-toggle {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 40px;
+      gap: 6px;
+      transition: all var(--transition);
     }
-    
-    .base-url-label { color: #10b981; font-weight: 600; font-size: 14px; }
-    .base-url-value { font-family: monospace; font-size: 14px; color: var(--text-main); }
-    
+
+    .response-toggle:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .response-toggle svg {
+      transition: transform 0.2s;
+    }
+
+    .response-toggle.open svg {
+      transform: rotate(90deg);
+    }
+
+    .response-body {
+      display: none;
+      margin-top: 10px;
+      background: #0a0a0f;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+
+    .response-body.open {
+      display: block;
+    }
+
+    .json-key {
+      color: #38bdf8;
+    }
+
+    .json-str {
+      color: #34d399;
+    }
+
+    .json-num {
+      color: #f472b6;
+    }
+
+    .json-bool {
+      color: #fb923c;
+    }
+
+    .json-null {
+      color: #71717a;
+    }
+
+    /* AUTOCOMPLETE */
+    .autocomplete-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .autocomplete-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 200;
+      display: none;
+      margin-top: 2px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+
+    .autocomplete-results.active {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item.selected {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .autocomplete-item mark {
+      background: rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      border-radius: 2px;
+    }
+
     @media (max-width: 900px) {
       .api-container {
         flex-direction: column;
       }
+
       .api-sidebar {
         width: 100%;
         position: static;
         max-height: none;
       }
+
+      .param-row {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- HEADER -->
   <div id="header">
     <div class="header-content">
       <div id="logo-block">
         <div id="logo" onclick="window.location.href='index.html'">Namma BMTC <span>DB</span></div>
         <div id="logo-sub">Open REST API</div>
       </div>
-      <div>
-        <a href="index.html" style="color:var(--text-muted);text-decoration:none;font-size:14px;font-weight:500;transition:0.2s;">Back to App →</a>
-      </div>
+      <a href="index.html" style="color:var(--text-muted);text-decoration:none;font-size:14px;font-weight:500;">← Back
+        to App</a>
     </div>
   </div>
 
   <div class="api-container">
+
+    <!-- SIDEBAR -->
     <div class="api-sidebar">
       <div class="api-nav-group">
+        <div class="api-nav-title">Overview</div>
+        <a href="#overview" class="api-nav-link">
+          <div class="nav-dot" style="background:#10b981"></div>Base URL & Info
+        </a>
+      </div>
+      <div class="api-nav-group">
         <div class="api-nav-title">Meta</div>
-        <a href="#stats" class="api-nav-link">System Stats</a>
+        <a href="#stats" class="api-nav-link">
+          <div class="nav-dot" style="background:#34d399"></div>System Stats
+        </a>
       </div>
       <div class="api-nav-group">
         <div class="api-nav-title">Routes</div>
-        <a href="#routes" class="api-nav-link">List Routes</a>
-        <a href="#route-search" class="api-nav-link">Search Routes</a>
-        <a href="#route-detail" class="api-nav-link">Get Route Info</a>
+        <a href="#routes-list" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>List Routes
+        </a>
+        <a href="#routes-search" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>Search Routes
+        </a>
+        <a href="#routes-between" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>Routes Between Stops
+        </a>
+        <a href="#routes-detail" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>Get Route
+        </a>
+        <a href="#routes-stops" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>Route Stops
+        </a>
+        <a href="#routes-variants" class="api-nav-link">
+          <div class="nav-dot" style="background:#60a5fa"></div>Route Variants
+        </a>
       </div>
       <div class="api-nav-group">
         <div class="api-nav-title">Stops</div>
-        <a href="#stops" class="api-nav-link">List Stops</a>
-        <a href="#stop-nearby" class="api-nav-link">Nearby Stops</a>
+        <a href="#stops-list" class="api-nav-link">
+          <div class="nav-dot" style="background:#f472b6"></div>List Stops
+        </a>
+        <a href="#stops-search" class="api-nav-link">
+          <div class="nav-dot" style="background:#f472b6"></div>Search Stops
+        </a>
+        <a href="#stops-nearby" class="api-nav-link">
+          <div class="nav-dot" style="background:#f472b6"></div>Nearby Stops
+        </a>
+        <a href="#stops-detail" class="api-nav-link">
+          <div class="nav-dot" style="background:#f472b6"></div>Get Stop
+        </a>
+        <a href="#stops-routes" class="api-nav-link">
+          <div class="nav-dot" style="background:#f472b6"></div>Routes at Stop
+        </a>
+      </div>
+      <div class="api-nav-group">
+        <div class="api-nav-title">Categories</div>
+        <a href="#categories" class="api-nav-link">
+          <div class="nav-dot" style="background:#a78bfa"></div>List Categories
+        </a>
+        <a href="#categories-routes" class="api-nav-link">
+          <div class="nav-dot" style="background:#a78bfa"></div>Routes by Category
+        </a>
       </div>
     </div>
 
+    <!-- CONTENT -->
     <div class="api-content">
-      <div class="api-header">
-        <h1>Developer API Documentation</h1>
-        <p>A fast, free, and completely open REST API to query Bengaluru's bus network. Our dataset covers thousands of active routes, stop sequences, and precise latitudes & longitudes.</p>
+
+      <div class="api-hero" id="overview">
+        <h1>Namma BMTC <span>API</span></h1>
+        <p>A free, open REST API for Bengaluru's bus network. Query 2,957 routes, 4,927 stops, and precise
+          geo-coordinates. No auth required.</p>
       </div>
 
       <div class="base-url-card">
-        <div class="base-url-label">Base URL</div>
-        <div class="base-url-value">https://nammabmtcdb-api.onrender.com</div>
-      </div>
-
-      <!-- ENDPOINTS -->
-
-      <div id="stats" class="endpoint-card">
-        <div class="endpoint-title">
-          <span class="method-badge method-get">GET</span>
-          <span class="endpoint-path">/stats</span>
+        <div>
+          <div class="base-url-label">Base URL</div>
+          <div class="base-url-value">https://nammabmtcdb-api.onrender.com</div>
         </div>
-        <div class="endpoint-desc">
-          Retrieve system-wide metadata, tracking the total number of routes, stops, and variants currently active in the database.
-        </div>
-        
-        <div class="mock-terminal">
-          <div class="mock-terminal-header">
-            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
-            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/stats&quot;')">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
-            </button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            No auth required
           </div>
-          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/stats"</span>
-
-{
-  <span class="json-key">"total_routes"</span>: <span class="json-num">2104</span>,
-  <span class="json-key">"total_stops"</span>: <span class="json-num">8426</span>,
-  <span class="json-key">"by_category"</span>: {
-    <span class="json-key">"mf"</span>: <span class="json-num">58</span>,
-    <span class="json-key">"airport"</span>: <span class="json-num">17</span>,
-    <span class="json-key">"general"</span>: <span class="json-num">1605</span>
-  }
-}</div>
-        </div>
-      </div>
-
-      <div id="route-search" class="endpoint-card">
-        <div class="endpoint-title">
-          <span class="method-badge method-get">GET</span>
-          <span class="endpoint-path">/routes/search</span>
-        </div>
-        <div class="endpoint-desc">
-          Search for bus routes using a query string. Matches against route numbers (e.g. "500-D") and route names (e.g. "Hebbal").
-        </div>
-        
-        <div class="endpoint-section-title">Query Parameters</div>
-        <table class="api-table">
-          <tr>
-            <td><span class="param-name">q</span><br><span class="param-req">required</span></td>
-            <td><span class="param-type">string</span></td>
-            <td style="color: var(--text-muted);">The search keyword to look for.</td>
-          </tr>
-          <tr>
-            <td><span class="param-name">category</span></td>
-            <td><span class="param-type">string</span></td>
-            <td style="color: var(--text-muted);">Filter by category ID (e.g., <code>airport</code>, <code>mf</code>, <code>orbital</code>).</td>
-          </tr>
-        </table>
-        
-        <div class="mock-terminal">
-          <div class="mock-terminal-header">
-            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
-            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/routes/search?q=500&amp;limit=1&quot;')">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
-            </button>
+          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+            JSON responses
           </div>
-          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/routes/search?q=500&limit=1"</span>
-
-{
-  <span class="json-key">"query"</span>: <span class="json-str">"500"</span>,
-  <span class="json-key">"total"</span>: <span class="json-num">1</span>,
-  <span class="json-key">"routes"</span>: [
-    {
-      <span class="json-key">"route_id"</span>: <span class="json-str">"500-D"</span>,
-      <span class="json-key">"name"</span>: <span class="json-str">"Hebbal to Central Silk Board"</span>,
-      <span class="json-key">"category"</span>: <span class="json-str">"orbital"</span>,
-      <span class="json-key">"stops_count"</span>: <span class="json-num">36</span>,
-      <span class="json-key">"variants_count"</span>: <span class="json-num">2</span>
-    }
-  ]
-}</div>
-        </div>
-      </div>
-
-      <div id="route-detail" class="endpoint-card">
-        <div class="endpoint-title">
-          <span class="method-badge method-get">GET</span>
-          <span class="endpoint-path">/routes/{route_id}/stops</span>
-        </div>
-        <div class="endpoint-desc">
-          Get the precise sequence of stops for a specific route variant, including exact geographical coordinates.
-        </div>
-        
-        <div class="endpoint-section-title">Path Parameters</div>
-        <table class="api-table">
-          <tr>
-            <td><span class="param-name">route_id</span><br><span class="param-req">required</span></td>
-            <td><span class="param-type">string</span></td>
-            <td style="color: var(--text-muted);">The exact route ID (e.g. <code>500-D</code>).</td>
-          </tr>
-        </table>
-        
-        <div class="mock-terminal">
-          <div class="mock-terminal-header">
-            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
-            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/routes/MF-1A/stops&quot;')">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
-            </button>
+          <div style="font-size:12px;color:var(--text-dim);display:flex;align-items:center;gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            CORS enabled
           </div>
-          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/routes/MF-1A/stops"</span>
-
-{
-  <span class="json-key">"route_id"</span>: <span class="json-str">"MF-1A"</span>,
-  <span class="json-key">"variant"</span>: <span class="json-num">0</span>,
-  <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro Station ⇔ Mahadevapura"</span>,
-  <span class="json-key">"stops"</span>: [
-    {
-      <span class="json-key">"sequence"</span>: <span class="json-num">1</span>,
-      <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro Station"</span>,
-      <span class="json-key">"lat"</span>: <span class="json-num">12.985655</span>,
-      <span class="json-key">"lng"</span>: <span class="json-num">77.644919</span>
-    },
-    {
-      <span class="json-key">"sequence"</span>: <span class="json-num">2</span>,
-      <span class="json-key">"name"</span>: <span class="json-str">"Isolation Hospital"</span>,
-      <span class="json-key">"lat"</span>: <span class="json-num">12.986684</span>,
-      <span class="json-key">"lng"</span>: <span class="json-num">77.646549</span>
-    }
-  ]
-}</div>
         </div>
       </div>
-      
-      <div id="stops" class="endpoint-card">
-        <div class="endpoint-title">
+
+      <!-- ═══ META ═══ -->
+      <div class="section-heading" id="stats">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="6" height="6" rx="1" />
+          <rect x="16" y="2" width="6" height="6" rx="1" />
+          <rect x="2" y="16" width="6" height="6" rx="1" />
+          <rect x="16" y="16" width="6" height="6" rx="1" />
+        </svg>
+        Meta
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
           <span class="method-badge method-get">GET</span>
-          <span class="endpoint-path">/stops/nearby</span>
-        </div>
-        <div class="endpoint-desc">
-          Retrieve all bus stops near a specific geographical coordinate, sorted by distance.
-        </div>
-        
-        <div class="endpoint-section-title">Query Parameters</div>
-        <table class="api-table">
-          <tr>
-            <td><span class="param-name">lat</span><br><span class="param-req">required</span></td>
-            <td><span class="param-type">number</span></td>
-            <td style="color: var(--text-muted);">Latitude of the search center.</td>
-          </tr>
-          <tr>
-            <td><span class="param-name">lng</span><br><span class="param-req">required</span></td>
-            <td><span class="param-type">number</span></td>
-            <td style="color: var(--text-muted);">Longitude of the search center.</td>
-          </tr>
-          <tr>
-            <td><span class="param-name">radius</span></td>
-            <td><span class="param-type">number</span></td>
-            <td style="color: var(--text-muted);">Search radius in meters (Default: 500, Max: 5000).</td>
-          </tr>
-        </table>
-        
-        <div class="mock-terminal">
-          <div class="mock-terminal-header">
-            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
-            <button class="btn-copy" onclick="copyCode(this, 'curl -X GET &quot;https://nammabmtcdb-api.onrender.com/stops/nearby?lat=12.9716&amp;lng=77.5946&amp;radius=200&quot;')">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy
-            </button>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stats</div>
+            <div class="endpoint-desc">Returns total counts for routes, stops, and a per-category breakdown.</div>
           </div>
-          <div class="mock-terminal-body"><span class="term-prompt">$</span><span class="term-cmd">curl</span> -X GET <span class="term-url">"https://nammabmtcdb-api.onrender.com/stops/nearby?lat=12.9716&lng=77.5946&radius=200"</span>
-
-{
-  <span class="json-key">"lat"</span>: <span class="json-num">12.9716</span>,
-  <span class="json-key">"lng"</span>: <span class="json-num">77.5946</span>,
-  <span class="json-key">"radius_m"</span>: <span class="json-num">200</span>,
-  <span class="json-key">"total"</span>: <span class="json-num">2</span>,
-  <span class="json-key">"stops"</span>: [
-    {
-      <span class="json-key">"name"</span>: <span class="json-str">"M.A.C.C.O.Society"</span>,
-      <span class="json-key">"lat"</span>: <span class="json-num">12.972306</span>,
-      <span class="json-key">"lng"</span>: <span class="json-num">77.593683</span>,
-      <span class="json-key">"distance_m"</span>: <span class="json-num">126</span>
-    },
-    {
-      <span class="json-key">"name"</span>: <span class="json-str">"St.Marthas Hospital Corporate"</span>,
-      <span class="json-key">"lat"</span>: <span class="json-num">12.971168</span>,
-      <span class="json-key">"lng"</span>: <span class="json-num">77.592965</span>,
-      <span class="json-key">"distance_m"</span>: <span class="json-num">184</span>
-    }
-  ]
-}</div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>
+              Try it
+            </div>
+            <div class="builder-body">
+              <div class="url-display" id="url-stats">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-stats-text')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="url-display-body">
+                  <span id="url-stats-text"><span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                      class="url-path">/stats</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+              Example Response
+            </button>
+            <div class="response-body">
+              {
+              <span class="json-key">"total_routes"</span>: <span class="json-num">2957</span>,
+              <span class="json-key">"total_stops"</span>: <span class="json-num">4927</span>,
+              <span class="json-key">"routes_with_variants"</span>: <span class="json-num">780</span>,
+              <span class="json-key">"by_category"</span>: {
+              <span class="json-key">"mf"</span>: <span class="json-num">124</span>,
+              <span class="json-key">"airport"</span>: <span class="json-num">31</span>,
+              <span class="json-key">"radial"</span>: <span class="json-num">34</span>,
+              <span class="json-key">"orbital"</span>: <span class="json-num">689</span>,
+              <span class="json-key">"express"</span>: <span class="json-num">12</span>,
+              <span class="json-key">"general"</span>: <span class="json-num">2067</span>
+              }
+              }
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- ═══ ROUTES ═══ -->
+      <div class="section-heading" id="routes-list">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="8" y1="6" x2="21" y2="6" />
+          <line x1="8" y1="12" x2="21" y2="12" />
+          <line x1="8" y1="18" x2="21" y2="18" />
+          <line x1="3" y1="6" x2="3.01" y2="6" />
+          <line x1="3" y1="12" x2="3.01" y2="12" />
+          <line x1="3" y1="18" x2="3.01" y2="18" />
+        </svg>
+        Routes
+      </div>
+
+      <!-- List Routes -->
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes</div>
+            <div class="endpoint-desc">Paginated list of all routes. Filter by category.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">category<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Filter by category: <code>mf</code> <code>airport</code> <code>radial</code>
+                <code>orbital</code> <code>express</code> <code>general</code></div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">page<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Page number (default: 1)</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">limit<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Results per page. Max 200 (default: 50)</div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">category</span>
+                <select class="builder-select" id="routes-list-cat" onchange="buildUrl('routes-list')">
+                  <option value="">All</option>
+                  <option value="mf">Metro Feeder (mf)</option>
+                  <option value="airport">Airport</option>
+                  <option value="radial">Radial</option>
+                  <option value="orbital">Orbital</option>
+                  <option value="express">Express</option>
+                  <option value="general">General</option>
+                </select>
+                <span class="builder-label" style="min-width:40px">page</span>
+                <input type="number" class="builder-input builder-input-sm" id="routes-list-page" value="1" min="1"
+                  oninput="buildUrl('routes-list')">
+                <span class="builder-label" style="min-width:40px">limit</span>
+                <input type="number" class="builder-input builder-input-sm" id="routes-list-limit" value="10" min="1"
+                  max="200" oninput="buildUrl('routes-list')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-routes-list')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="url-display-body" id="url-routes-list">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes</span><span class="url-sep">?</span><span
+                    class="url-param-key">page</span><span class="url-sep">=</span><span
+                    class="url-param-val">1</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">limit</span><span class="url-sep">=</span><span
+                    class="url-param-val">10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Routes -->
+      <div class="endpoint-card" id="routes-search">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes/search</div>
+            <div class="endpoint-desc">Search routes by route number or name. Matches "500-D", "Majestic", "Hebbal",
+              etc.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">q<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Search keyword — matches route ID or route name</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">category<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Narrow to a specific category</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">limit<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Max results (default: 20, max: 100)</div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">query (q)</span>
+                <input type="text" class="builder-input" id="search-routes-q" placeholder="e.g. Hebbal, 500-D, MF-1..."
+                  oninput="buildUrl('search-routes')">
+                <span class="builder-label" style="min-width:40px">limit</span>
+                <input type="number" class="builder-input builder-input-sm" id="search-routes-limit" value="5" min="1"
+                  max="100" oninput="buildUrl('search-routes')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-search-routes')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-search-routes">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes/search</span><span class="url-sep">?</span><span
+                    class="url-param-key">q</span><span class="url-sep">=</span><span
+                    class="url-param-val">Hebbal</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">limit</span><span class="url-sep">=</span><span class="url-param-val">5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)"><svg width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>Example Response</button>
+            <div class="response-body">{
+              <span class="json-key">"query"</span>: <span class="json-str">"500-D"</span>,
+              <span class="json-key">"total"</span>: <span class="json-num">1</span>,
+              <span class="json-key">"routes"</span>: [
+              {
+              <span class="json-key">"route_id"</span>: <span class="json-str">"500-D"</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Hebbal ⇔ Central Silk Board"</span>,
+              <span class="json-key">"category"</span>: <span class="json-str">"orbital"</span>,
+              <span class="json-key">"stops_count"</span>: <span class="json-num">36</span>,
+              <span class="json-key">"variants_count"</span>: <span class="json-num">2</span>
+              }
+              ]
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Routes Between Stops -->
+      <div class="endpoint-card" id="routes-between">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes/between</div>
+            <div class="endpoint-desc">Find all routes that pass through both stops in the correct order. Useful for
+              journey planning.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">from<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Exact name of the origin stop</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">to<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Exact name of the destination stop</div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it — pick stops from the actual dataset</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">from stop</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="between-from" placeholder="Search stop name..."
+                    oninput="stopAutocomplete('between-from', 'between-from-results')"
+                    onblur="hideAC('between-from-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="between-from-results"></div>
+                </div>
+              </div>
+              <div class="builder-row">
+                <span class="builder-label">to stop</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="between-to" placeholder="Search stop name..."
+                    oninput="stopAutocomplete('between-to', 'between-to-results')" onblur="hideAC('between-to-results')"
+                    autocomplete="off">
+                  <div class="autocomplete-results" id="between-to-results"></div>
+                </div>
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-between')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-between">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes/between</span><span class="url-sep">?</span><span
+                    class="url-param-key">from</span><span class="url-sep">=</span><span
+                    class="url-param-val">Kempegowda Bus Station</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">to</span><span class="url-sep">=</span><span class="url-param-val">Central
+                    Silk Board</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)"><svg width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>Example Response</button>
+            <div class="response-body">{
+              <span class="json-key">"from"</span>: <span class="json-str">"Kempegowda Bus Station"</span>,
+              <span class="json-key">"to"</span>: <span class="json-str">"Central Silk Board"</span>,
+              <span class="json-key">"total"</span>: <span class="json-num">4</span>,
+              <span class="json-key">"routes"</span>: [
+              {
+              <span class="json-key">"route_id"</span>: <span class="json-str">"500-D"</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Hebbal ⇔ Central Silk Board"</span>,
+              <span class="json-key">"category"</span>: <span class="json-str">"orbital"</span>,
+              <span class="json-key">"from_stop_seq"</span>: <span class="json-num">8</span>,
+              <span class="json-key">"to_stop_seq"</span>: <span class="json-num">36</span>,
+              <span class="json-key">"stops_between"</span>: <span class="json-num">27</span>
+              }
+              ]
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Route -->
+      <div class="endpoint-card" id="routes-detail">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span></div>
+            <div class="endpoint-desc">Full detail for a route including all variants.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Path Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">route_id<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Exact route ID e.g. <code>500-D</code>, <code>MF-1C</code>, <code>KIA-8</code>
+              </div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">route_id</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="route-detail-id"
+                    placeholder="e.g. 500-D, MF-1C, KIA-8..."
+                    oninput="routeAutocomplete('route-detail-id', 'route-detail-results'); buildUrl('route-detail')"
+                    onblur="hideAC('route-detail-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="route-detail-results"></div>
+                </div>
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-route-detail')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-route-detail">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes/</span><span class="url-param-val">500-D</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Route Stops -->
+      <div class="endpoint-card" id="routes-stops">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span>/stops</div>
+            <div class="endpoint-desc">Ordered stop sequence with lat/lng for each stop. Choose variant if multiple
+              exist.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Path Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">route_id<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Route ID</div>
+            </div>
+            <div class="params-label" style="margin-top:12px">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">variant<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Variant index (default: 0 = primary variant)</div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">route_id</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="route-stops-id" placeholder="e.g. MF-1C, 500-D..."
+                    oninput="routeAutocomplete('route-stops-id', 'route-stops-results'); buildUrl('route-stops')"
+                    onblur="hideAC('route-stops-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="route-stops-results"></div>
+                </div>
+                <span class="builder-label" style="min-width:60px">variant</span>
+                <input type="number" class="builder-input builder-input-sm" id="route-stops-variant" value="0" min="0"
+                  oninput="buildUrl('route-stops')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-route-stops')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-route-stops">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes/</span><span class="url-param-val">MF-1C</span><span
+                    class="url-path">/stops</span><span class="url-sep">?</span><span
+                    class="url-param-key">variant</span><span class="url-sep">=</span><span
+                    class="url-param-val">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)"><svg width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>Example Response</button>
+            <div class="response-body">{
+              <span class="json-key">"route_id"</span>: <span class="json-str">"MF-1C"</span>,
+              <span class="json-key">"variant"</span>: <span class="json-num">0</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro Station ⇔
+                Mahadevapura"</span>,
+              <span class="json-key">"stops"</span>: [
+              {
+              <span class="json-key">"sequence"</span>: <span class="json-num">1</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Swami Vivekananda Road Metro
+                Station"</span>,
+              <span class="json-key">"lat"</span>: <span class="json-num">12.985655</span>,
+              <span class="json-key">"lng"</span>: <span class="json-num">77.644919</span>
+              },
+              {
+              <span class="json-key">"sequence"</span>: <span class="json-num">2</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Isolation Hospital"</span>,
+              <span class="json-key">"lat"</span>: <span class="json-num">12.986684</span>,
+              <span class="json-key">"lng"</span>: <span class="json-num">77.646549</span>
+              }
+              ]
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Route Variants -->
+      <div class="endpoint-card" id="routes-variants">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span>/variants</div>
+            <div class="endpoint-desc">Lists all recorded variants for a route. 780 routes have multiple variants with
+              different stop sequences.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">route_id</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="route-variants-id" placeholder="e.g. 112-A, 500-D..."
+                    oninput="routeAutocomplete('route-variants-id', 'route-variants-results'); buildUrl('route-variants')"
+                    onblur="hideAC('route-variants-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="route-variants-results"></div>
+                </div>
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-route-variants')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-route-variants">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/routes/</span><span class="url-param-val">112-A</span><span
+                    class="url-path">/variants</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STOPS ═══ -->
+      <div class="section-heading" id="stops-list">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+        Stops
+      </div>
+
+      <!-- List Stops -->
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stops</div>
+            <div class="endpoint-desc">Paginated list of all 4,927 stops with coordinates.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">page</span>
+                <input type="number" class="builder-input builder-input-sm" id="stops-list-page" value="1" min="1"
+                  oninput="buildUrl('stops-list')">
+                <span class="builder-label" style="min-width:40px">limit</span>
+                <input type="number" class="builder-input builder-input-sm" id="stops-list-limit" value="20" min="1"
+                  max="500" oninput="buildUrl('stops-list')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-stops-list')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-stops-list">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/stops</span><span class="url-sep">?</span><span
+                    class="url-param-key">page</span><span class="url-sep">=</span><span
+                    class="url-param-val">1</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">limit</span><span class="url-sep">=</span><span
+                    class="url-param-val">20</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Stops -->
+      <div class="endpoint-card" id="stops-search">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stops/search</div>
+            <div class="endpoint-desc">Search stops by name. Returns matching stops with coordinates.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">query (q)</span>
+                <input type="text" class="builder-input" id="search-stops-q"
+                  placeholder="e.g. Majestic, Hebbal, Koramangala..." oninput="buildUrl('search-stops')">
+                <span class="builder-label" style="min-width:40px">limit</span>
+                <input type="number" class="builder-input builder-input-sm" id="search-stops-limit" value="10" min="1"
+                  max="100" oninput="buildUrl('search-stops')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-search-stops')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-search-stops">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/stops/search</span><span class="url-sep">?</span><span
+                    class="url-param-key">q</span><span class="url-sep">=</span><span
+                    class="url-param-val">Koramangala</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">limit</span><span class="url-sep">=</span><span
+                    class="url-param-val">10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nearby Stops -->
+      <div class="endpoint-card" id="stops-nearby">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stops/nearby</div>
+            <div class="endpoint-desc">Find all bus stops within a radius of a coordinate, sorted by distance. Great for
+              location-aware apps.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">lat<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">number</div>
+              <div class="param-desc">Latitude (decimal degrees)</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">lng<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">number</div>
+              <div class="param-desc">Longitude (decimal degrees)</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">radius<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">number</div>
+              <div class="param-desc">Search radius in metres. Default: 500. Max: 5000.</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">limit<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Max results (default: 20)</div>
+            </div>
+          </div>
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it — or <button onclick="useMyLocation()"
+                style="background:rgba(16,185,129,0.15);border:none;color:#34d399;font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;cursor:pointer;margin-left:4px;">Use
+                my location</button></div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">lat</span>
+                <input type="number" step="0.0001" class="builder-input builder-input-sm" id="nearby-lat"
+                  value="12.9716" oninput="buildUrl('nearby')">
+                <span class="builder-label" style="min-width:30px">lng</span>
+                <input type="number" step="0.0001" class="builder-input builder-input-sm" id="nearby-lng"
+                  value="77.5946" oninput="buildUrl('nearby')">
+                <span class="builder-label" style="min-width:50px">radius m</span>
+                <input type="number" class="builder-input builder-input-sm" id="nearby-radius" value="500" min="50"
+                  max="5000" oninput="buildUrl('nearby')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-nearby')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-nearby">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/stops/nearby</span><span class="url-sep">?</span><span
+                    class="url-param-key">lat</span><span class="url-sep">=</span><span
+                    class="url-param-val">12.9716</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">lng</span><span class="url-sep">=</span><span
+                    class="url-param-val">77.5946</span><span class="url-sep">&amp;</span><span
+                    class="url-param-key">radius</span><span class="url-sep">=</span><span
+                    class="url-param-val">500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)"><svg width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>Example Response</button>
+            <div class="response-body">{
+              <span class="json-key">"lat"</span>: <span class="json-num">12.9716</span>,
+              <span class="json-key">"lng"</span>: <span class="json-num">77.5946</span>,
+              <span class="json-key">"radius_m"</span>: <span class="json-num">500</span>,
+              <span class="json-key">"total"</span>: <span class="json-num">3</span>,
+              <span class="json-key">"stops"</span>: [
+              {
+              <span class="json-key">"name"</span>: <span class="json-str">"Ananda Rao Circle"</span>,
+              <span class="json-key">"lat"</span>: <span class="json-num">12.972306</span>,
+              <span class="json-key">"lng"</span>: <span class="json-num">77.593683</span>,
+              <span class="json-key">"distance_m"</span>: <span class="json-num">126</span>
+              }
+              ]
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Get Stop -->
+      <div class="endpoint-card" id="stops-detail">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stops/<span class="param-seg">{stop_name}</span></div>
+            <div class="endpoint-desc">Get coordinates for a specific stop by its exact name.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">stop_name</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="stop-detail-name" placeholder="Search stop name..."
+                    oninput="stopAutocomplete('stop-detail-name', 'stop-detail-results'); buildUrl('stop-detail')"
+                    onblur="hideAC('stop-detail-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="stop-detail-results"></div>
+                </div>
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-stop-detail')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-stop-detail">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/stops/</span><span class="url-param-val">Kempegowda Bus Station</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Routes at Stop -->
+      <div class="endpoint-card" id="stops-routes">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/stops/<span class="param-seg">{stop_name}</span>/routes</div>
+            <div class="endpoint-desc">All routes that pass through a given stop, with stop sequence number. One of the
+              most useful endpoints.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it — pick a stop</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">stop_name</span>
+                <div class="autocomplete-wrap">
+                  <input type="text" class="builder-input" id="stop-routes-name" placeholder="Search stop name..."
+                    oninput="stopAutocomplete('stop-routes-name', 'stop-routes-results'); buildUrl('stop-routes')"
+                    onblur="hideAC('stop-routes-results')" autocomplete="off">
+                  <div class="autocomplete-results" id="stop-routes-results"></div>
+                </div>
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-stop-routes')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-stop-routes">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/stops/</span><span class="url-param-val">Kempegowda Bus Station</span><span
+                    class="url-path">/routes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)"><svg width="12" height="12"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>Example Response</button>
+            <div class="response-body">{
+              <span class="json-key">"stop"</span>: <span class="json-str">"Kempegowda Bus Station"</span>,
+              <span class="json-key">"total"</span>: <span class="json-num">48</span>,
+              <span class="json-key">"routes"</span>: [
+              {
+              <span class="json-key">"route_id"</span>: <span class="json-str">"104"</span>,
+              <span class="json-key">"name"</span>: <span class="json-str">"Kempegowda Bus Station ⇔
+                Sadashivanagara"</span>,
+              <span class="json-key">"category"</span>: <span class="json-str">"general"</span>,
+              <span class="json-key">"stop_sequence"</span>: <span class="json-num">1</span>,
+              <span class="json-key">"total_stops"</span>: <span class="json-num">11</span>
+              }
+              ]
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ CATEGORIES ═══ -->
+      <div class="section-heading" id="categories">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+        Categories
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/categories</div>
+            <div class="endpoint-desc">All route categories with labels, colors, and route counts.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-categories')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-categories">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/categories</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoint-card" id="categories-routes">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/categories/<span class="param-seg">{category_id}</span>/routes</div>
+            <div class="endpoint-desc">All routes in a specific category, paginated.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="builder-row">
+                <span class="builder-label">category</span>
+                <select class="builder-select" id="cat-routes-cat" onchange="buildUrl('cat-routes')">
+                  <option value="mf">Metro Feeder (mf)</option>
+                  <option value="airport">Airport</option>
+                  <option value="radial">Radial</option>
+                  <option value="orbital">Orbital</option>
+                  <option value="express">Express</option>
+                  <option value="general">General</option>
+                </select>
+                <span class="builder-label" style="min-width:40px">limit</span>
+                <input type="number" class="builder-input builder-input-sm" id="cat-routes-limit" value="10" min="1"
+                  max="200" oninput="buildUrl('cat-routes')">
+              </div>
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-cat-routes')"><svg width="11" height="11"
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>Copy</button>
+                </div>
+                <div class="url-display-body" id="url-cat-routes">
+                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                    class="url-path">/categories/</span><span class="url-param-val">mf</span><span
+                    class="url-path">/routes</span><span class="url-sep">?</span><span
+                    class="url-param-key">limit</span><span class="url-sep">=</span><span
+                    class="url-param-val">10</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 60px;"></div>
 
     </div>
   </div>
 
   <script>
-    function copyCode(btn, text) {
+    const BASE = 'https://nammabmtcdb-api.onrender.com';
+    const enc = s => encodeURIComponent(s);
+
+    // ── STOPS + ROUTES DATA (inline for autocomplete) ──────────────────────────
+    const STOPS = ["Kempegowda Bus Station", "Majestic", "Central Silk Board", "Indiranagara", "Koramangala", "Whitefield", "Marathahalli", "Hebbal", "Electronic City", "Jayanagara", "Banashankari", "Shivajinagara Bus Station", "MG Road", "Vidhana Soudha", "Rajajinagara", "Yelahanka", "Peenya", "Yeshawanthapura", "KR Market", "Lalbagh Main Gate", "Ananda Rao Circle", "Malleshwara Circle", "Silk Institute Metro Station", "Bannerughatta Circle", "Bommasandra", "Silk Farm", "JP Nagara 6th Phase", "HSR Layout 2nd Sector", "BTM Layout Water Tank", "Sadashivanagara", "Domlur", "Ejipura", "Bellanduru Gate SJP Road", "Kadugodi Bus Station", "Tin Factory", "Hoodi Metro Station", "Bayyappanahalli Metro Station", "Goraguntepalya", "Sunkadakatte", "Kengeri Bus Station", "Hosakote Bus Station (TTMC)", "Anekal", "Devanahalli New Bus Station", "Nelamangala Bus Station", "Bidadi", "Magadi Bus Stand", "Kanakapura Bus Stand", "Ramanagara Bus Stand", "Jigani Bus Stand", "Anepalya", "Shanthinagara Bus Station", "Jayanagara Bus Station", "Vijayanagara Bus Station", "Mysore Road Bus Station", "Banasawadi", "Kammanahalli", "Basavanagara", "Indiranagara Metro Station", "Cubbon Park Metro Station", "Rajajinagara Metro Station", "Lalbagh Metro Station", "Trinity Metro Station", "MG Road Metro Station", "Nagasandra Metro Station", "Peenya Metro Station", "Hosakerehalli  Junction", "Kundalahalli Gate", "ITPL", "Kadugodi Metro Station", "Hoodi BBMP Office", "Marathahalli Bridge", "Bellanduru Petrol Bunk", "Doddakallasandra Metro Station", "Jnanabharathi Metro Station", "Kengeri Metro Station", "Singasandra Metro Station", "Hongasandra Metro Station", "South End Circle Metro Station", "Jayanagara Metro Station", "JP Nagara Metro Station", "Vajarahalli Metro Station", "RV Metro Station", "Dasanahalli Cross", "Vidhana Soudha Karnataka High Court", "Attiguppe Metro Station", "Byatarayanapura", "Bagmane Tech Park", "BEML Factory", "HAL Main Gate", "Manipal Centre MG Road", "Cantonment Railway Station", "KR Pura Metro Station", "Hoodi Railway Station", "Byranayakanahalli Railway Station", "Doddaballapura Railway Station", "Nelamangala Railway Station", "Yelahanka Old Town", "Jalavayuvihar", "Domlur Bridge", "Kamanahalli Circle", "Tavarekere", "Kengeri Railway Station", "Malleshwara Railway Station"];
+
+    const ROUTES = ["104", "107-C", "111", "112-A", "114", "119", "12", "13", "18", "2", "22", "24", "25", "27", "31", "32", "34", "35", "36", "37", "43", "49", "50", "500", "500-A", "500-C", "500-D", "500-F", "501-A", "502-A", "505", "506", "507", "510", "515", "55-B", "59-D", "60-A", "60-E", "63", "75-B", "77", "79-A", "79-B", "80", "80-A", "82", "87", "88", "89-A", "94", "95", "96", "99-A", "MF-1C", "MF-1F", "MF-1G", "MF-2", "MF-3", "MF-4", "MF-5", "MF-6", "MF-7", "MF-8", "MF-9", "MF-10", "MF-11", "MF-12", "MF-13", "MF-14", "MF-15", "MF-16A", "MF-17", "MF-18", "MF-19", "MF-20", "MF-21", "MF-22", "MF-23", "MF-24", "MF-25", "MF-26", "MF-27", "MF-28", "MF-29", "MF-30", "MF-31", "MF-32", "MF-34", "MF-36", "MF-38", "MF-39", "MF-40", "MF-41", "MF-42", "MF-43", "MF-45", "MF-46", "MF-47", "MF-48", "MF-49", "MF-51", "KIA-4", "KIA-5", "KIA-6", "KIA-7", "KIA-8", "KIA-9", "KIA-10", "KIA-14", "KIA-15", "G-2", "G-3", "G-4", "G-6", "G-7", "G-8", "G-9", "G-10", "G-11", "500-D", "500-C", "500-CH", "600", "600-A", "600-C", "600-F", "600-G", "K-2", "K-3", "NICE-2", "NICE-4", "NICE-5", "NICE-6", "NICE-7", "NICE-8", "NICE-10", "EXP-213V", "EXP-226N", "EXP-258C", "EXP-285M", "EXP-298M", "EXP-600F", "201", "210-A", "210-D", "210-E", "211", "211-A", "212", "213", "213-A", "213-B", "214", "215", "215-A", "215-B", "216", "217-D", "218", "220-D", "221-A", "222-A", "223-A", "224", "225-B", "225-C", "226", "226-B", "226-C", "226-D", "226-E", "226-N", "227", "227-A", "227-B", "228", "229", "230", "231", "234", "235-A", "237-C", "238-C", "238-E", "238-V", "240", "240-A", "241", "241-A", "242", "242-B", "243-A", "244-H", "245", "245-A", "246", "247", "248", "248-A", "250", "250-A", "251", "252", "253", "253-A", "254", "255", "255-A", "256-B", "257", "258", "258-A", "263", "265", "266", "266-A", "267", "269", "270-A", "271-A", "272-B", "273", "276", "278-E", "280", "281-F", "282", "282-A", "283", "284", "284-A", "285", "285-A", "285-B", "285-C", "286", "286-A", "287-A", "288", "289", "289-A", "290", "290-A", "291", "292", "293", "293-A", "294", "295", "296", "297", "298", "299", "300-B", "301", "302", "303", "304", "305", "306", "307", "308", "310", "312", "314", "315", "316", "317", "317-A", "318", "319", "320", "321", "322", "323", "324", "325", "326-C", "327", "328", "329", "330-B", "331", "332", "333", "334", "335-C", "336", "338", "340-A", "341-A", "342", "342-A", "343", "344-A", "345", "346-A", "347", "348", "349", "350-A", "351", "352", "353", "354", "355", "356", "357", "358", "359", "360", "361-B", "362", "364-A", "365", "365-B", "366", "366-A", "367", "368", "369", "370", "371-A", "372", "374-M", "375", "377-A", "378", "378-A", "380-P", "381-C", "390", "398-B", "399", "399-A", "400-A", "401", "401-A", "401-E", "401-K", "401-M", "401-N", "401-R", "402", "404-A", "405", "406", "407", "409", "410-F", "411-A", "412", "415", "415-B"];
+
+    // ── AUTOCOMPLETE ────────────────────────────────────────────────────────────
+    function stopAutocomplete(inputId, resultsId) {
+      const q = document.getElementById(inputId).value.toLowerCase().trim();
+      const box = document.getElementById(resultsId);
+      if (!q) { box.classList.remove('active'); return; }
+      const matches = STOPS.filter(s => s.toLowerCase().includes(q)).slice(0, 8);
+      if (!matches.length) { box.classList.remove('active'); return; }
+      box.innerHTML = matches.map(s => {
+        const hi = s.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark>${m}</mark>`);
+        return `<div class="autocomplete-item" onmousedown="selectStop('${inputId}','${resultsId}','${s.replace(/'/g, "\\'")}')">${hi}</div>`;
+      }).join('');
+      box.classList.add('active');
+    }
+
+    function routeAutocomplete(inputId, resultsId) {
+      const q = document.getElementById(inputId).value.toLowerCase().trim();
+      const box = document.getElementById(resultsId);
+      if (!q) { box.classList.remove('active'); return; }
+      const matches = ROUTES.filter(r => r.toLowerCase().includes(q)).slice(0, 8);
+      if (!matches.length) { box.classList.remove('active'); return; }
+      box.innerHTML = matches.map(r => {
+        const hi = r.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark>${m}</mark>`);
+        return `<div class="autocomplete-item" onmousedown="selectRoute('${inputId}','${resultsId}','${r.replace(/'/g, "\\'")}')">${hi}</div>`;
+      }).join('');
+      box.classList.add('active');
+    }
+
+    function selectStop(inputId, resultsId, val) {
+      document.getElementById(inputId).value = val;
+      document.getElementById(resultsId).classList.remove('active');
+      buildUrlFromStop(inputId);
+    }
+
+    function selectRoute(inputId, resultsId, val) {
+      document.getElementById(inputId).value = val;
+      document.getElementById(resultsId).classList.remove('active');
+      buildUrl(inputId.replace('-id', '').replace('route-', 'route-'));
+      // trigger the right builder
+      if (inputId === 'route-detail-id') buildUrl('route-detail');
+      else if (inputId === 'route-stops-id') buildUrl('route-stops');
+      else if (inputId === 'route-variants-id') buildUrl('route-variants');
+    }
+
+    function buildUrlFromStop(inputId) {
+      if (inputId === 'between-from' || inputId === 'between-to') buildUrl('between');
+      else if (inputId === 'stop-detail-name') buildUrl('stop-detail');
+      else if (inputId === 'stop-routes-name') buildUrl('stop-routes');
+    }
+
+    function hideAC(resultsId) { setTimeout(() => { const b = document.getElementById(resultsId); if (b) b.classList.remove('active'); }, 150); }
+
+    // ── URL BUILDERS ────────────────────────────────────────────────────────────
+    function g(id) { return document.getElementById(id) ? document.getElementById(id).value : ''; }
+
+    function buildUrl(type) {
+      const B = BASE;
+      let html = '';
+      const sp = (k, v) => `<span class="url-sep">?</span><span class="url-param-key">${k}</span><span class="url-sep">=</span><span class="url-param-val">${enc(v)}</span>`;
+      const amp = (k, v) => `<span class="url-sep">&amp;</span><span class="url-param-key">${k}</span><span class="url-sep">=</span><span class="url-param-val">${enc(v)}</span>`;
+      const path = s => `<span class="url-path">${s}</span>`;
+      const pval = s => `<span class="url-param-val">${s}</span>`;
+      const base = `<span class="url-base">${B}</span>`;
+
+      if (type === 'routes-list') {
+        const cat = g('routes-list-cat'), page = g('routes-list-page') || '1', limit = g('routes-list-limit') || '10';
+        let params = sp('page', page) + amp('limit', limit);
+        if (cat) params = sp('category', cat) + amp('page', page) + amp('limit', limit);
+        html = base + path('/routes') + params;
+        document.getElementById('url-routes-list').innerHTML = html;
+
+      } else if (type === 'search-routes') {
+        const q = g('search-routes-q') || 'Hebbal', limit = g('search-routes-limit') || '5';
+        html = base + path('/routes/search') + sp('q', q) + amp('limit', limit);
+        document.getElementById('url-search-routes').innerHTML = html;
+
+      } else if (type === 'between') {
+        const from = g('between-from') || 'Kempegowda Bus Station', to = g('between-to') || 'Central Silk Board';
+        html = base + path('/routes/between') + sp('from', from) + amp('to', to);
+        document.getElementById('url-between').innerHTML = html;
+
+      } else if (type === 'route-detail') {
+        const id = g('route-detail-id') || '500-D';
+        html = base + path('/routes/') + pval(enc(id));
+        document.getElementById('url-route-detail').innerHTML = html;
+
+      } else if (type === 'route-stops') {
+        const id = g('route-stops-id') || 'MF-1C', v = g('route-stops-variant') || '0';
+        html = base + path('/routes/') + pval(enc(id)) + path('/stops') + sp('variant', v);
+        document.getElementById('url-route-stops').innerHTML = html;
+
+      } else if (type === 'route-variants') {
+        const id = g('route-variants-id') || '112-A';
+        html = base + path('/routes/') + pval(enc(id)) + path('/variants');
+        document.getElementById('url-route-variants').innerHTML = html;
+
+      } else if (type === 'stops-list') {
+        const page = g('stops-list-page') || '1', limit = g('stops-list-limit') || '20';
+        html = base + path('/stops') + sp('page', page) + amp('limit', limit);
+        document.getElementById('url-stops-list').innerHTML = html;
+
+      } else if (type === 'search-stops') {
+        const q = g('search-stops-q') || 'Koramangala', limit = g('search-stops-limit') || '10';
+        html = base + path('/stops/search') + sp('q', q) + amp('limit', limit);
+        document.getElementById('url-search-stops').innerHTML = html;
+
+      } else if (type === 'nearby') {
+        const lat = g('nearby-lat') || '12.9716', lng = g('nearby-lng') || '77.5946', r = g('nearby-radius') || '500';
+        html = base + path('/stops/nearby') + sp('lat', lat) + amp('lng', lng) + amp('radius', r);
+        document.getElementById('url-nearby').innerHTML = html;
+
+      } else if (type === 'stop-detail') {
+        const name = g('stop-detail-name') || 'Kempegowda Bus Station';
+        html = base + path('/stops/') + pval(enc(name));
+        document.getElementById('url-stop-detail').innerHTML = html;
+
+      } else if (type === 'stop-routes') {
+        const name = g('stop-routes-name') || 'Kempegowda Bus Station';
+        html = base + path('/stops/') + pval(enc(name)) + path('/routes');
+        document.getElementById('url-stop-routes').innerHTML = html;
+
+      } else if (type === 'cat-routes') {
+        const cat = g('cat-routes-cat') || 'mf', limit = g('cat-routes-limit') || '10';
+        html = base + path('/categories/') + pval(cat) + path('/routes') + sp('limit', limit);
+        document.getElementById('url-cat-routes').innerHTML = html;
+      }
+    }
+
+    // ── COPY ────────────────────────────────────────────────────────────────────
+    function copyUrl(btn, elId) {
+      const el = document.getElementById(elId);
+      const text = el ? el.innerText : '';
       navigator.clipboard.writeText(text).then(() => {
-        const originalContent = btn.innerHTML;
-        btn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied';
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
         btn.classList.add('copied');
-        
-        setTimeout(() => {
-          btn.innerHTML = originalContent;
-          btn.classList.remove('copied');
-        }, 2000);
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
       });
     }
 
-    // Scroll active link styling
-    const links = document.querySelectorAll('.api-nav-link');
+    // ── RESPONSE TOGGLE ─────────────────────────────────────────────────────────
+    function toggleResponse(btn) {
+      btn.classList.toggle('open');
+      const body = btn.nextElementSibling;
+      body.classList.toggle('open');
+    }
+
+    // ── GEO LOCATION ────────────────────────────────────────────────────────────
+    function useMyLocation() {
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('nearby-lat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('nearby-lng').value = pos.coords.longitude.toFixed(6);
+        buildUrl('nearby');
+      });
+    }
+
+    // ── SIDEBAR ACTIVE LINK ─────────────────────────────────────────────────────
+    const navLinks = document.querySelectorAll('.api-nav-link');
+    const sections = document.querySelectorAll('[id]');
     window.addEventListener('scroll', () => {
-      let current = '';
-      document.querySelectorAll('.endpoint-card').forEach(card => {
-        const cardTop = card.offsetTop;
-        if (pageYOffset >= cardTop - 120) {
-          current = card.getAttribute('id');
-        }
+      let cur = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+      navLinks.forEach(l => {
+        if (l.getAttribute('href') === `#${cur}`) l.classList.add('active');
+        else l.classList.remove('active');
       });
-      
-      links.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-          link.classList.add('active');
-        }
-      });
-    });
+    }, { passive: true });
   </script>
+
 </body>
+
 </html>

@@ -199,11 +199,16 @@ function loadMoreGridItems() {
 }
 
 const listViewScroll = document.getElementById('list-view');
+let listScrollTimeout;
 if (listViewScroll) {
   listViewScroll.addEventListener('scroll', function() {
-    if (this.scrollTop + this.clientHeight >= this.scrollHeight - 300) {
-      loadMoreGridItems();
-    }
+    if (listScrollTimeout) return;
+    listScrollTimeout = setTimeout(() => {
+      if (this.scrollTop + this.clientHeight >= this.scrollHeight - 300) {
+        loadMoreGridItems();
+      }
+      listScrollTimeout = null;
+    }, 50);
   });
 }
 
@@ -481,8 +486,10 @@ function launchMaps() {
 
 // ── SEARCH & MAP CONTROLS ─────────────────────
 const mapStopSearch = document.getElementById('map-stop-search');
+let mapSearchTimeout;
 if (mapStopSearch) {
 mapStopSearch.addEventListener('input', e => {
+  clearTimeout(mapSearchTimeout);
   const q = e.target.value.toLowerCase().trim();
   const resBox = document.getElementById('map-stop-results');
   const clearBtn = document.getElementById('map-search-clear');
@@ -498,34 +505,36 @@ mapStopSearch.addEventListener('input', e => {
     return; 
   }
   
-  let validStops = null;
-  if (currentCat !== 'all') {
-    validStops = new Set();
-    for (const k of allKeys) {
-      if (getCategory(k) === currentCat) {
-        const variants = Array.isArray(ROUTES[k]) ? ROUTES[k] : [ROUTES[k]];
-        variants.forEach(v => {
-          if (v.stops) v.stops.forEach(s => validStops.add(s));
-        });
+  mapSearchTimeout = setTimeout(() => {
+    let validStops = null;
+    if (currentCat !== 'all') {
+      validStops = new Set();
+      for (const k of allKeys) {
+        if (getCategory(k) === currentCat) {
+          const variants = Array.isArray(ROUTES[k]) ? ROUTES[k] : [ROUTES[k]];
+          variants.forEach(v => {
+            if (v.stops) v.stops.forEach(s => validStops.add(s));
+          });
+        }
       }
     }
-  }
-  
-  const matches = Object.keys(STOPS_LOC)
-    .filter(s => {
-      if (validStops && !validStops.has(s)) return false;
-      return s.toLowerCase().includes(q);
-    })
-    .slice(0, 50);
     
-  if(matches.length === 0) {
-    resBox.innerHTML = '<div class="map-stop-item" style="color:#ef4444">No stops found</div>';
-  } else {
-    resBox.innerHTML = matches.map(s => 
-      `<div class="map-stop-item" onclick="flyToStop('${s.replace(/'/g, "\\'")}')">${escHtml(s)}</div>`
-    ).join('');
-  }
-  resBox.classList.add('active');
+    const matches = Object.keys(STOPS_LOC)
+      .filter(s => {
+        if (validStops && !validStops.has(s)) return false;
+        return s.toLowerCase().includes(q);
+      })
+      .slice(0, 50);
+      
+    if(matches.length === 0) {
+      resBox.innerHTML = '<div class="map-stop-item" style="color:#ef4444">No stops found</div>';
+    } else {
+      resBox.innerHTML = matches.map(s => 
+        `<div class="map-stop-item" onclick="flyToStop('${s.replace(/'/g, "\\'")}')">${escHtml(s)}</div>`
+      ).join('');
+    }
+    resBox.classList.add('active');
+  }, 150);
 });
 }
 
@@ -590,8 +599,10 @@ function selectMainSearch(k) {
 }
 
 const mainSearch = document.getElementById('search');
+let mainSearchTimeout;
 if (mainSearch) {
 mainSearch.addEventListener('input', e => {
+  clearTimeout(mainSearchTimeout);
   currentSearch = e.target.value.trim();
   const q = currentSearch.toLowerCase();
   const resBox = document.getElementById('main-search-results');
@@ -626,8 +637,10 @@ mainSearch.addEventListener('input', e => {
     resBox.classList.add('active');
   }
   
-  renderGrid();
-  if (viewMode === 'map') renderMap();
+  mainSearchTimeout = setTimeout(() => {
+    renderGrid();
+    if (viewMode === 'map') renderMap();
+  }, 200);
 });
 
 mainSearch.addEventListener('blur', () => {

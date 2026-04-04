@@ -148,6 +148,59 @@
         bottom: 16px !important;
       }
     }
+
+    .api-docs-special {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .api-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: var(--accent-base);
+      color: #000;
+      letter-spacing: 0.05em;
+    }
+
+    .title-code {
+      font-family: monospace;
+      font-size: 12px;
+      opacity: 0.5;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 4px;
+      border-radius: 4px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
+    .api-docs-special::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.03), transparent);
+      transform: rotate(45deg);
+      animation: scan 3s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes scan {
+      0% {
+        transform: translate(-30%, -30%) rotate(45deg);
+      }
+
+      100% {
+        transform: translate(30%, 30%) rotate(45deg);
+      }
+    }
   </style>
 </head>
 
@@ -183,13 +236,14 @@
         <div class="option-desc">Search, filter, and browse details of over 2000+ BMTC buses.</div>
       </a>
 
-      <a href="api.html" class="option-card" style="--card-color: #06b6d4;">
+      <a href="api.html" class="option-card api-docs-special" style="--card-color: #10b981;">
+        <div class="api-badge">Beta</div>
         <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 18 22 12 16 6"></polyline>
           <polyline points="8 6 2 12 8 18"></polyline>
         </svg>
-        <div class="option-title">Open API</div>
+        <div class="option-title">Open API <span class="title-code">v1.2</span></div>
         <div class="option-desc">Developer documentation for the Namma BMTC open REST API platform.</div>
       </a>
     </div>
@@ -197,8 +251,10 @@
 
   <div id="author-credit" style="pointer-events: auto; text-align: left;">
     <div>Made by Aditya Pokuri</div>
-    <div style="font-size: 9px; opacity: 0.7; margin-top: 4px; text-transform: none; font-weight: 500; letter-spacing: 0.2px;">
-      Data from <a href="https://github.com/vonter/bmtc-gtfs" target="_blank" style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">vonter/bmtc-gtfs</a>
+    <div
+      style="font-size: 9px; opacity: 0.7; margin-top: 4px; text-transform: none; font-weight: 500; letter-spacing: 0.2px;">
+      Data from <a href="https://github.com/vonter/bmtc-gtfs" target="_blank"
+        style="color: inherit; text-decoration: underline; text-underline-offset: 2px;">vonter/bmtc-gtfs</a>
     </div>
   </div>
 
