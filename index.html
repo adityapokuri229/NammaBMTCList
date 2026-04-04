@@ -151,7 +151,6 @@
 
     .api-docs-special {
       position: relative;
-      overflow: hidden;
     }
 
     .api-badge {
@@ -177,29 +176,6 @@
       border-radius: 4px;
       margin-left: 4px;
       vertical-align: middle;
-    }
-
-    .api-docs-special::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.03), transparent);
-      transform: rotate(45deg);
-      animation: scan 3s infinite linear;
-      pointer-events: none;
-    }
-
-    @keyframes scan {
-      0% {
-        transform: translate(-30%, -30%) rotate(45deg);
-      }
-
-      100% {
-        transform: translate(30%, 30%) rotate(45deg);
-      }
     }
   </style>
 </head>
