@@ -630,18 +630,102 @@
     }
 
     @media (max-width: 900px) {
+      .header-content {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between !important;
+        padding: 0 20px;
+      }
+      
+      #header {
+        height: 72px !important;
+        padding-bottom: 0 !important;
+      }
+
       .api-container {
         flex-direction: column;
       }
 
       .api-sidebar {
         width: 100%;
-        position: static;
+        position: sticky;
+        top: 72px;
+        z-index: 50;
         max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 16px 20px;
+        background: var(--bg-base);
+      }
+
+      .api-sidebar {
+        /* Convert to horizontal scrolling */
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        gap: 24px;
+        align-items: baseline;
+      }
+      
+      .api-sidebar::-webkit-scrollbar {
+        height: 0px;
+      }
+
+      .api-nav-group {
+        margin-bottom: 0;
+        display: inline-flex;
+        gap: 12px;
+        align-items: center;
+      }
+      
+      .api-nav-title {
+        margin-bottom: 0;
+        margin-right: 4px;
+      }
+
+      .api-nav-link {
+        display: inline-block;
+        padding: 6px 12px;
+      }
+
+      .api-main {
+        padding: 24px;
       }
 
       .param-row {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      
+      .endpoint-header {
+        flex-direction: column;
+      }
+      
+      .builder-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .api-main {
+        padding: 20px 16px;
+      }
+      .api-hero h1 {
+        font-size: 28px;
+      }
+      .api-hero p {
+        font-size: 14px;
+      }
+      .base-url-card {
+        padding: 16px;
+      }
+      .endpoint-path {
+        word-break: break-all;
+      }
+      .url-display-body {
+        font-size: 11px;
       }
     }
   </style>
@@ -693,10 +777,6 @@
           Get Route
         </a>
         <a href="#routes-stops" class="api-nav-link">
-          Route Stops
-        </a>
-        <a href="#routes-variants" class="api-nav-link">
-          Route Variants
         </a>
       </div>
       <div class="api-nav-group">
@@ -883,7 +963,6 @@
               {
               <span class="json-key">"total_routes"</span>: <span class="json-num">2957</span>,
               <span class="json-key">"total_stops"</span>: <span class="json-num">4927</span>,
-              <span class="json-key">"routes_with_variants"</span>: <span class="json-num">780</span>,
               <span class="json-key">"by_category"</span>: {
               <span class="json-key">"mf"</span>: <span class="json-num">124</span>,
               <span class="json-key">"airport"</span>: <span class="json-num">31</span>,
@@ -1074,8 +1153,7 @@
               <span class="json-key">"route_id"</span>: <span class="json-str">"500-D"</span>,
               <span class="json-key">"name"</span>: <span class="json-str">"Hebbal ⇔ Central Silk Board"</span>,
               <span class="json-key">"category"</span>: <span class="json-str">"orbital"</span>,
-              <span class="json-key">"stops_count"</span>: <span class="json-num">36</span>,
-              <span class="json-key">"variants_count"</span>: <span class="json-num">2</span>
+              <span class="json-key">"stops_count"</span>: <span class="json-num">36</span>
               }
               ]
               }
@@ -1186,7 +1264,7 @@
           <span class="method-badge method-get">GET</span>
           <div class="endpoint-meta">
             <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span></div>
-            <div class="endpoint-desc">Full detail for a route — returns the primary variant (longest stop sequence) with its complete stop list.</div>
+            <div class="endpoint-desc">Full detail for a route with its complete stop list.</div>
           </div>
         </div>
         <div class="endpoint-body">
@@ -1244,7 +1322,7 @@
           <span class="method-badge method-get">GET</span>
           <div class="endpoint-meta">
             <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span>/stops</div>
-            <div class="endpoint-desc">Ordered stop sequence with lat/lng for each stop. Returns the primary variant (longest stop sequence).</div>
+            <div class="endpoint-desc">Ordered stop sequence with lat/lng for each stop.</div>
           </div>
         </div>
         <div class="endpoint-body">
@@ -1322,63 +1400,6 @@
         </div>
       </div>
 
-      <!-- Route Variants -->
-      <div class="endpoint-card" id="routes-variants">
-        <div class="endpoint-header">
-          <span class="method-badge method-get">GET</span>
-          <div class="endpoint-meta">
-            <div class="endpoint-path">/routes/<span class="param-seg">{route_id}</span>/variants</div>
-            <div class="endpoint-desc">Lists all recorded variants for a route. 780 routes have multiple variants with
-              different stop sequences.</div>
-          </div>
-        </div>
-        <div class="endpoint-body">
-          <div class="params-section">
-            <div class="params-label">Path Parameters</div>
-            <div class="param-row">
-              <div class="param-name-cell">route_id<br><span class="param-req-badge">required</span></div>
-              <div class="param-type-cell">string</div>
-              <div class="param-desc">Route ID e.g. <code>112-A</code>, <code>500-D</code></div>
-            </div>
-          </div>
-          <div class="builder-section">
-            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-              </svg>Try it</div>
-            <div class="builder-body">
-              <div class="builder-row">
-                <span class="builder-label">route_id</span>
-                <div class="autocomplete-wrap">
-                  <input type="text" class="builder-input" id="route-variants-id" placeholder="e.g. 112-A, 500-D..."
-                    oninput="routeAutocomplete('route-variants-id', 'route-variants-results'); buildUrl('route-variants')"
-                    onblur="hideAC('route-variants-results')" autocomplete="off">
-                  <div class="autocomplete-results" id="route-variants-results"></div>
-                </div>
-              </div>
-              <div class="url-display">
-                <div class="url-display-header">
-                  <div class="mac-dots">
-                    <div class="mac-dot r"></div>
-                    <div class="mac-dot y"></div>
-                    <div class="mac-dot g"></div>
-                  </div>
-                  <button class="btn-copy" onclick="copyUrl(this, 'url-route-variants')"><svg width="11" height="11"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="9" y="9" width="13" height="13" rx="2" />
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                    </svg>Copy</button>
-                </div>
-                <div class="url-display-body" id="url-route-variants">
-                  <span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
-                    class="url-path">/routes/</span><span class="url-param-val">112-A</span><span
-                    class="url-path">/variants</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- ═══ STOPS ═══ -->
       <div class="section-heading" id="stops-list">
@@ -1905,7 +1926,6 @@
       // trigger the right builder
       if (inputId === 'route-detail-id') buildUrl('route-detail');
       else if (inputId === 'route-stops-id') buildUrl('route-stops');
-      else if (inputId === 'route-variants-id') buildUrl('route-variants');
     }
 
     function buildUrlFromStop(inputId) {
@@ -1954,11 +1974,6 @@
         const id = g('route-stops-id') || 'MF-1C';
         html = base + path('/routes/') + pval(enc(id)) + path('/stops');
         document.getElementById('url-route-stops').innerHTML = html;
-
-      } else if (type === 'route-variants') {
-        const id = g('route-variants-id') || '112-A';
-        html = base + path('/routes/') + pval(enc(id)) + path('/variants');
-        document.getElementById('url-route-variants').innerHTML = html;
 
       } else if (type === 'stops-list') {
         const page = g('stops-list-page') || '1', limit = g('stops-list-limit') || '20';
@@ -2034,12 +2049,20 @@
             l.classList.add('active');
             const sidebar = document.querySelector('.api-sidebar');
             if (sidebar) {
-              const linkTop = l.offsetTop;
-              const sidebarScroll = sidebar.scrollTop;
-              const sidebarHeight = sidebar.clientHeight;
-              // If the link is outside the visible area of the sidebar, scroll to it
-              if (linkTop < sidebarScroll + 20 || linkTop > sidebarScroll + sidebarHeight - 40) {
-                sidebar.scrollTo({ top: linkTop - sidebarHeight / 2, behavior: 'smooth' });
+              if (window.innerWidth < 900) {
+                const linkLeft = l.offsetLeft - sidebar.offsetLeft;
+                const sidebarScrollLeft = sidebar.scrollLeft;
+                const sidebarWidth = sidebar.clientWidth;
+                if (linkLeft < sidebarScrollLeft + 20 || linkLeft > sidebarScrollLeft + sidebarWidth - 60) {
+                  sidebar.scrollTo({ left: linkLeft - sidebarWidth / 2 + l.clientWidth / 2, behavior: 'smooth' });
+                }
+              } else {
+                const linkTop = l.offsetTop;
+                const sidebarScroll = sidebar.scrollTop;
+                const sidebarHeight = sidebar.clientHeight;
+                if (linkTop < sidebarScroll + 20 || linkTop > sidebarScroll + sidebarHeight - 40) {
+                  sidebar.scrollTo({ top: linkTop - sidebarHeight / 2, behavior: 'smooth' });
+                }
               }
             }
           }

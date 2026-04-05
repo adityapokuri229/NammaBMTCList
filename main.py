@@ -34,10 +34,13 @@ with open(os.path.join(BASE_DIR, "locations.json"), encoding="utf-8") as f:
 # Case-insensitive stop name lookup → canonical name
 STOPS_LOOKUP: dict[str, str] = {name.lower(): name for name in STOPS_LOC}
 
-# Normalize: every route value becomes a list of variants
-ROUTES: dict[str, list[dict]] = {}
+# Normalize: every route value becomes a single dict (the longest variant)
+ROUTES: dict[str, dict] = {}
 for key, val in RAW_ROUTES.items():
-    ROUTES[key] = val if isinstance(val, list) else [val]
+    if isinstance(val, list):
+        ROUTES[key] = max(val, key=lambda v: len(v.get("stops", [])))
+    else:
+        ROUTES[key] = val
 
 ALL_KEYS = sorted(ROUTES.keys(), key=lambda x: x)
 
@@ -64,26 +67,22 @@ def get_category(key: str) -> str:
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 
 def route_summary(key: str) -> dict:
-    variants = ROUTES[key]
-    primary = max(variants, key=lambda v: len(v.get("stops", [])))
+    primary = ROUTES[key]
     return {
         "route_id":      key,
         "name":          primary["name"],
         "category":      get_category(key),
         "stops_count":   len(primary.get("stops", [])),
-        "variants_count": len(variants),
     }
 
 def route_detail(key: str) -> dict:
-    variants = ROUTES[key]
-    primary = max(variants, key=lambda v: len(v.get("stops", [])))
+    primary = ROUTES[key]
     stops = primary.get("stops", [])
     return {
         "route_id":  key,
         "name":      primary["name"],
         "category":  get_category(key),
         "stops_count": len(stops),
-        "variants_count": len(variants),
         "stops":     stops,
     }
 
@@ -110,7 +109,6 @@ def stats():
     return {
         "total_routes": len(ALL_KEYS),
         "total_stops":  len(STOPS_LOC),
-        "routes_with_variants": sum(1 for k in ALL_KEYS if len(ROUTES[k]) > 1),
         "by_category":  counts,
     }
 
@@ -179,7 +177,7 @@ def search_routes(
             continue
         if q_clean in k.lower().replace("-", "").replace(" ", ""):
             results.append(k); continue
-        name = ROUTES[k][0]["name"]
+        name = ROUTES[k]["name"]
         if q_clean in name.lower().replace(" ", ""):
             results.append(k)
     return {
@@ -198,21 +196,20 @@ def routes_between(
     to_l   = to_stop.lower()
     matches = []
     for k in ALL_KEYS:
-        for v in ROUTES[k]:
-            stops = [s.lower() for s in v.get("stops", [])]
-            if from_l in stops and to_l in stops:
-                fi = stops.index(from_l)
-                ti = stops.index(to_l)
-                if fi < ti:  # correct direction
-                    matches.append({
-                        "route_id":      k,
-                        "name":          v["name"],
-                        "category":      get_category(k),
-                        "from_stop_seq": fi + 1,
-                        "to_stop_seq":   ti + 1,
-                        "stops_between": ti - fi - 1,
-                    })
-                    break
+        v = ROUTES[k]
+        stops = [s.lower() for s in v.get("stops", [])]
+        if from_l in stops and to_l in stops:
+            fi = stops.index(from_l)
+            ti = stops.index(to_l)
+            if fi < ti:  # correct direction
+                matches.append({
+                    "route_id":      k,
+                    "name":          v["name"],
+                    "category":      get_category(k),
+                    "from_stop_seq": fi + 1,
+                    "to_stop_seq":   ti + 1,
+                    "stops_between": ti - fi - 1,
+                })
     return {
         "from": from_stop,
         "to":   to_stop,
@@ -230,8 +227,7 @@ def get_route(route_id: str):
 def get_route_stops(route_id: str):
     if route_id not in ROUTES:
         raise HTTPException(404, f"Route '{route_id}' not found.")
-    variants = ROUTES[route_id]
-    primary = max(variants, key=lambda v: len(v.get("stops", [])))
+    primary = ROUTES[route_id]
     stops = primary.get("stops", [])
     return {
         "route_id": route_id,
@@ -247,25 +243,7 @@ def get_route_stops(route_id: str):
         ],
     }
 
-@app.get("/routes/{route_id}/variants", tags=["Routes"])
-def get_route_variants(route_id: str):
-    if route_id not in ROUTES:
-        raise HTTPException(404, f"Route '{route_id}' not found.")
-    variants = ROUTES[route_id]
-    return {
-        "route_id":      route_id,
-        "variants_count": len(variants),
-        "variants": [
-            {
-                "variant_index": i,
-                "name":          v["name"],
-                "stops_count":   len(v.get("stops", [])),
-                "first_stop":    v["stops"][0]  if v.get("stops") else None,
-                "last_stop":     v["stops"][-1] if v.get("stops") else None,
-            }
-            for i, v in enumerate(variants)
-        ],
-    }
+
 
 # ── STOPS ─────────────────────────────────────────────────────────────────────
 
@@ -337,18 +315,17 @@ def routes_at_stop(stop_name: str):
     stop_l = canonical.lower()
     results = []
     for k in ALL_KEYS:
-        for v in ROUTES[k]:
-            stops_lower = [s.lower() for s in v.get("stops", [])]
-            if stop_l in stops_lower:
-                seq = stops_lower.index(stop_l) + 1
-                results.append({
-                    "route_id":  k,
-                    "name":      v["name"],
-                    "category":  get_category(k),
-                    "stop_sequence": seq,
-                    "total_stops":   len(stops_lower),
-                })
-                break
+        v = ROUTES[k]
+        stops_lower = [s.lower() for s in v.get("stops", [])]
+        if stop_l in stops_lower:
+            seq = stops_lower.index(stop_l) + 1
+            results.append({
+                "route_id":  k,
+                "name":      v["name"],
+                "category":  get_category(k),
+                "stop_sequence": seq,
+                "total_stops":   len(stops_lower),
+            })
     return {
         "stop":  canonical,
         "total": len(results),
