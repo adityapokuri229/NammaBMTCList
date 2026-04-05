@@ -31,6 +31,9 @@ with open(os.path.join(BASE_DIR, "routes.json"), encoding="utf-8") as f:
 with open(os.path.join(BASE_DIR, "locations.json"), encoding="utf-8") as f:
     STOPS_LOC: dict = json.load(f)  # { stop_name: [lat, lng] }
 
+# Case-insensitive stop name lookup → canonical name
+STOPS_LOOKUP: dict[str, str] = {name.lower(): name for name in STOPS_LOC}
+
 # Normalize: every route value becomes a list of variants
 ROUTES: dict[str, list[dict]] = {}
 for key, val in RAW_ROUTES.items():
@@ -326,16 +329,18 @@ def stops_nearby(
 
 @app.get("/stops/{stop_name}", tags=["Stops"])
 def get_stop(stop_name: str):
-    if stop_name not in STOPS_LOC:
+    canonical = STOPS_LOOKUP.get(stop_name.lower())
+    if not canonical:
         raise HTTPException(404, f"Stop '{stop_name}' not found.")
-    lat, lng = STOPS_LOC[stop_name]
-    return {"name": stop_name, "lat": lat, "lng": lng}
+    lat, lng = STOPS_LOC[canonical]
+    return {"name": canonical, "lat": lat, "lng": lng}
 
 @app.get("/stops/{stop_name}/routes", tags=["Stops"])
 def routes_at_stop(stop_name: str):
-    if stop_name not in STOPS_LOC:
+    canonical = STOPS_LOOKUP.get(stop_name.lower())
+    if not canonical:
         raise HTTPException(404, f"Stop '{stop_name}' not found.")
-    stop_l = stop_name.lower()
+    stop_l = canonical.lower()
     results = []
     for k in ALL_KEYS:
         for v in ROUTES[k]:
@@ -351,7 +356,7 @@ def routes_at_stop(stop_name: str):
                 })
                 break
     return {
-        "stop":  stop_name,
+        "stop":  canonical,
         "total": len(results),
         "routes": results,
     }

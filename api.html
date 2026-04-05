@@ -671,6 +671,9 @@
       </div>
       <div class="api-nav-group">
         <div class="api-nav-title">Meta</div>
+        <a href="#health" class="api-nav-link">
+          Health Check
+        </a>
         <a href="#stats" class="api-nav-link">
           System Stats
         </a>
@@ -764,6 +767,66 @@
       </div>
 
       <!-- ═══ META ═══ -->
+      <div class="section-heading" id="health">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+        Meta
+      </div>
+
+      <div class="endpoint-card">
+        <div class="endpoint-header">
+          <span class="method-badge method-get">GET</span>
+          <div class="endpoint-meta">
+            <div class="endpoint-path">/health</div>
+            <div class="endpoint-desc">Simple health check. Returns <code>{"status": "ok"}</code> when the API is running.</div>
+          </div>
+        </div>
+        <div class="endpoint-body">
+          <div class="builder-section">
+            <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>Try it</div>
+            <div class="builder-body">
+              <div class="url-display">
+                <div class="url-display-header">
+                  <div class="mac-dots">
+                    <div class="mac-dot r"></div>
+                    <div class="mac-dot y"></div>
+                    <div class="mac-dot g"></div>
+                  </div>
+                  <button class="btn-copy" onclick="copyUrl(this, 'url-health-text')">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" />
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="url-display-body">
+                  <span id="url-health-text"><span class="url-base">https://nammabmtcdb-api.onrender.com</span><span
+                      class="url-path">/health</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="response-section">
+            <button class="response-toggle" onclick="toggleResponse(this)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+              Example Response
+            </button>
+            <div class="response-body">
+              {
+              <span class="json-key">"status"</span>: <span class="json-str">"ok"</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="section-heading" id="stats">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="2" y="2" width="6" height="6" rx="1" />
@@ -940,8 +1003,7 @@
           <span class="method-badge method-get">GET</span>
           <div class="endpoint-meta">
             <div class="endpoint-path">/routes/search</div>
-            <div class="endpoint-desc">Search routes by route number or name. Matches "500-D", "Majestic", "Hebbal",
-              etc.</div>
+            <div class="endpoint-desc">Search routes by route number or name. Dashes and spaces are stripped before matching, so <code>500D</code> finds <code>500-D</code> and <code>kia8</code> finds <code>KIA-8</code>.</div>
           </div>
         </div>
         <div class="endpoint-body">
@@ -1039,12 +1101,12 @@
             <div class="param-row">
               <div class="param-name-cell">from<br><span class="param-req-badge">required</span></div>
               <div class="param-type-cell">string</div>
-              <div class="param-desc">Exact name of the origin stop</div>
+              <div class="param-desc">Origin stop name (case-insensitive)</div>
             </div>
             <div class="param-row">
               <div class="param-name-cell">to<br><span class="param-req-badge">required</span></div>
               <div class="param-type-cell">string</div>
-              <div class="param-desc">Exact name of the destination stop</div>
+              <div class="param-desc">Destination stop name (case-insensitive)</div>
             </div>
           </div>
           <div class="builder-section">
@@ -1286,6 +1348,14 @@
           </div>
         </div>
         <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Path Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">route_id<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Route ID e.g. <code>112-A</code>, <code>500-D</code></div>
+            </div>
+          </div>
           <div class="builder-section">
             <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -1344,6 +1414,19 @@
           </div>
         </div>
         <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">page<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Page number (default: 1)</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">limit<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Results per page. Max 500 (default: 100)</div>
+            </div>
+          </div>
           <div class="builder-section">
             <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -1395,6 +1478,19 @@
           </div>
         </div>
         <div class="endpoint-body">
+          <div class="params-section">
+            <div class="params-label">Query Parameters</div>
+            <div class="param-row">
+              <div class="param-name-cell">q<br><span class="param-req-badge">required</span></div>
+              <div class="param-type-cell">string</div>
+              <div class="param-desc">Search keyword — matches stop name (substring)</div>
+            </div>
+            <div class="param-row">
+              <div class="param-name-cell">limit<br><span class="param-opt-badge">optional</span></div>
+              <div class="param-type-cell">integer</div>
+              <div class="param-desc">Max results (default: 20, max: 100)</div>
+            </div>
+          </div>
           <div class="builder-section">
             <div class="builder-header"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2">
@@ -1729,6 +1825,9 @@
                   <option value="express">Express</option>
                   <option value="general">General</option>
                 </select>
+                <span class="builder-label" style="min-width:40px">page</span>
+                <input type="number" class="builder-input builder-input-sm" id="cat-routes-page" value="1" min="1"
+                  oninput="buildUrl('cat-routes')">
                 <span class="builder-label" style="min-width:40px">limit</span>
                 <input type="number" class="builder-input builder-input-sm" id="cat-routes-limit" value="10" min="1"
                   max="200" oninput="buildUrl('cat-routes')">
@@ -1768,10 +1867,17 @@
     const BASE = 'https://nammabmtcdb-api.onrender.com';
     const enc = s => encodeURIComponent(s);
 
-    // ── STOPS + ROUTES DATA (inline for autocomplete) ──────────────────────────
-    const STOPS = ["Kempegowda Bus Station", "Majestic", "Central Silk Board", "Indiranagara", "Koramangala", "Whitefield", "Marathahalli", "Hebbal", "Electronic City", "Jayanagara", "Banashankari", "Shivajinagara Bus Station", "MG Road", "Vidhana Soudha", "Rajajinagara", "Yelahanka", "Peenya", "Yeshawanthapura", "KR Market", "Lalbagh Main Gate", "Ananda Rao Circle", "Malleshwara Circle", "Silk Institute Metro Station", "Bannerughatta Circle", "Bommasandra", "Silk Farm", "JP Nagara 6th Phase", "HSR Layout 2nd Sector", "BTM Layout Water Tank", "Sadashivanagara", "Domlur", "Ejipura", "Bellanduru Gate SJP Road", "Kadugodi Bus Station", "Tin Factory", "Hoodi Metro Station", "Bayyappanahalli Metro Station", "Goraguntepalya", "Sunkadakatte", "Kengeri Bus Station", "Hosakote Bus Station (TTMC)", "Anekal", "Devanahalli New Bus Station", "Nelamangala Bus Station", "Bidadi", "Magadi Bus Stand", "Kanakapura Bus Stand", "Ramanagara Bus Stand", "Jigani Bus Stand", "Anepalya", "Shanthinagara Bus Station", "Jayanagara Bus Station", "Vijayanagara Bus Station", "Mysore Road Bus Station", "Banasawadi", "Kammanahalli", "Basavanagara", "Indiranagara Metro Station", "Cubbon Park Metro Station", "Rajajinagara Metro Station", "Lalbagh Metro Station", "Trinity Metro Station", "MG Road Metro Station", "Nagasandra Metro Station", "Peenya Metro Station", "Hosakerehalli  Junction", "Kundalahalli Gate", "ITPL", "Kadugodi Metro Station", "Hoodi BBMP Office", "Marathahalli Bridge", "Bellanduru Petrol Bunk", "Doddakallasandra Metro Station", "Jnanabharathi Metro Station", "Kengeri Metro Station", "Singasandra Metro Station", "Hongasandra Metro Station", "South End Circle Metro Station", "Jayanagara Metro Station", "JP Nagara Metro Station", "Vajarahalli Metro Station", "RV Metro Station", "Dasanahalli Cross", "Vidhana Soudha Karnataka High Court", "Attiguppe Metro Station", "Byatarayanapura", "Bagmane Tech Park", "BEML Factory", "HAL Main Gate", "Manipal Centre MG Road", "Cantonment Railway Station", "KR Pura Metro Station", "Hoodi Railway Station", "Byranayakanahalli Railway Station", "Doddaballapura Railway Station", "Nelamangala Railway Station", "Yelahanka Old Town", "Jalavayuvihar", "Domlur Bridge", "Kamanahalli Circle", "Tavarekere", "Kengeri Railway Station", "Malleshwara Railway Station"];
+    // ── STOPS + ROUTES DATA (loaded dynamically from actual dataset) ──────────
+    let STOPS = [];
+    let ROUTES = [];
 
-    const ROUTES = ["104", "107-C", "111", "112-A", "114", "119", "12", "13", "18", "2", "22", "24", "25", "27", "31", "32", "34", "35", "36", "37", "43", "49", "50", "500", "500-A", "500-C", "500-D", "500-F", "501-A", "502-A", "505", "506", "507", "510", "515", "55-B", "59-D", "60-A", "60-E", "63", "75-B", "77", "79-A", "79-B", "80", "80-A", "82", "87", "88", "89-A", "94", "95", "96", "99-A", "MF-1C", "MF-1F", "MF-1G", "MF-2", "MF-3", "MF-4", "MF-5", "MF-6", "MF-7", "MF-8", "MF-9", "MF-10", "MF-11", "MF-12", "MF-13", "MF-14", "MF-15", "MF-16A", "MF-17", "MF-18", "MF-19", "MF-20", "MF-21", "MF-22", "MF-23", "MF-24", "MF-25", "MF-26", "MF-27", "MF-28", "MF-29", "MF-30", "MF-31", "MF-32", "MF-34", "MF-36", "MF-38", "MF-39", "MF-40", "MF-41", "MF-42", "MF-43", "MF-45", "MF-46", "MF-47", "MF-48", "MF-49", "MF-51", "KIA-4", "KIA-5", "KIA-6", "KIA-7", "KIA-8", "KIA-9", "KIA-10", "KIA-14", "KIA-15", "G-2", "G-3", "G-4", "G-6", "G-7", "G-8", "G-9", "G-10", "G-11", "500-D", "500-C", "500-CH", "600", "600-A", "600-C", "600-F", "600-G", "K-2", "K-3", "NICE-2", "NICE-4", "NICE-5", "NICE-6", "NICE-7", "NICE-8", "NICE-10", "EXP-213V", "EXP-226N", "EXP-258C", "EXP-285M", "EXP-298M", "EXP-600F", "201", "210-A", "210-D", "210-E", "211", "211-A", "212", "213", "213-A", "213-B", "214", "215", "215-A", "215-B", "216", "217-D", "218", "220-D", "221-A", "222-A", "223-A", "224", "225-B", "225-C", "226", "226-B", "226-C", "226-D", "226-E", "226-N", "227", "227-A", "227-B", "228", "229", "230", "231", "234", "235-A", "237-C", "238-C", "238-E", "238-V", "240", "240-A", "241", "241-A", "242", "242-B", "243-A", "244-H", "245", "245-A", "246", "247", "248", "248-A", "250", "250-A", "251", "252", "253", "253-A", "254", "255", "255-A", "256-B", "257", "258", "258-A", "263", "265", "266", "266-A", "267", "269", "270-A", "271-A", "272-B", "273", "276", "278-E", "280", "281-F", "282", "282-A", "283", "284", "284-A", "285", "285-A", "285-B", "285-C", "286", "286-A", "287-A", "288", "289", "289-A", "290", "290-A", "291", "292", "293", "293-A", "294", "295", "296", "297", "298", "299", "300-B", "301", "302", "303", "304", "305", "306", "307", "308", "310", "312", "314", "315", "316", "317", "317-A", "318", "319", "320", "321", "322", "323", "324", "325", "326-C", "327", "328", "329", "330-B", "331", "332", "333", "334", "335-C", "336", "338", "340-A", "341-A", "342", "342-A", "343", "344-A", "345", "346-A", "347", "348", "349", "350-A", "351", "352", "353", "354", "355", "356", "357", "358", "359", "360", "361-B", "362", "364-A", "365", "365-B", "366", "366-A", "367", "368", "369", "370", "371-A", "372", "374-M", "375", "377-A", "378", "378-A", "380-P", "381-C", "390", "398-B", "399", "399-A", "400-A", "401", "401-A", "401-E", "401-K", "401-M", "401-N", "401-R", "402", "404-A", "405", "406", "407", "409", "410-F", "411-A", "412", "415", "415-B"];
+    Promise.all([
+      fetch('./locations.json').then(r => r.json()),
+      fetch('./routes.json').then(r => r.json())
+    ]).then(([locsData, routesData]) => {
+      STOPS = Object.keys(locsData).sort();
+      ROUTES = Object.keys(routesData).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    });
 
     // ── AUTOCOMPLETE ────────────────────────────────────────────────────────────
     function stopAutocomplete(inputId, resultsId) {
@@ -1788,13 +1894,14 @@
     }
 
     function routeAutocomplete(inputId, resultsId) {
-      const q = document.getElementById(inputId).value.toLowerCase().trim();
+      const raw = document.getElementById(inputId).value.trim();
+      const q = raw.toLowerCase().replace(/[-\s]/g, '');
       const box = document.getElementById(resultsId);
       if (!q) { box.classList.remove('active'); return; }
-      const matches = ROUTES.filter(r => r.toLowerCase().includes(q)).slice(0, 8);
+      const matches = ROUTES.filter(r => r.toLowerCase().replace(/[-\s]/g, '').includes(q)).slice(0, 8);
       if (!matches.length) { box.classList.remove('active'); return; }
       box.innerHTML = matches.map(r => {
-        const hi = r.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark>${m}</mark>`);
+        const hi = r.replace(new RegExp(raw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), m => `<mark>${m}</mark>`);
         return `<div class="autocomplete-item" onmousedown="selectRoute('${inputId}','${resultsId}','${r.replace(/'/g, "\\'")}')">${hi}</div>`;
       }).join('');
       box.classList.add('active');
@@ -1894,8 +2001,8 @@
         document.getElementById('url-stop-routes').innerHTML = html;
 
       } else if (type === 'cat-routes') {
-        const cat = g('cat-routes-cat') || 'mf', limit = g('cat-routes-limit') || '10';
-        html = base + path('/categories/') + pval(cat) + path('/routes') + sp('limit', limit);
+        const cat = g('cat-routes-cat') || 'mf', page = g('cat-routes-page') || '1', limit = g('cat-routes-limit') || '10';
+        html = base + path('/categories/') + pval(cat) + path('/routes') + sp('page', page) + amp('limit', limit);
         document.getElementById('url-cat-routes').innerHTML = html;
       }
     }
