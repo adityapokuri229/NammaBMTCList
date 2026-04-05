@@ -2029,8 +2029,23 @@
       let cur = '';
       sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
       navLinks.forEach(l => {
-        if (l.getAttribute('href') === `#${cur}`) l.classList.add('active');
-        else l.classList.remove('active');
+        if (l.getAttribute('href') === `#${cur}`) {
+          if (!l.classList.contains('active')) {
+            l.classList.add('active');
+            const sidebar = document.querySelector('.api-sidebar');
+            if (sidebar) {
+              const linkTop = l.offsetTop;
+              const sidebarScroll = sidebar.scrollTop;
+              const sidebarHeight = sidebar.clientHeight;
+              // If the link is outside the visible area of the sidebar, scroll to it
+              if (linkTop < sidebarScroll + 20 || linkTop > sidebarScroll + sidebarHeight - 40) {
+                sidebar.scrollTo({ top: linkTop - sidebarHeight / 2, behavior: 'smooth' });
+              }
+            }
+          }
+        } else {
+          l.classList.remove('active');
+        }
       });
     }, { passive: true });
   </script>
