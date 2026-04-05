@@ -718,14 +718,20 @@
       .api-hero p {
         font-size: 14px;
       }
-      .base-url-card {
-        padding: 16px;
+      .base-url-row {
+        flex-wrap: nowrap;
+        gap: 8px;
+        justify-content: space-between;
       }
-      .endpoint-path {
-        word-break: break-all;
-      }
-      .url-display-body {
+      .base-url-label {
+        flex-shrink: 0;
         font-size: 11px;
+      }
+      .base-url-value {
+        font-size: 12px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   </style>
