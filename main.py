@@ -65,7 +65,7 @@ def get_category(key: str) -> str:
 
 def route_summary(key: str) -> dict:
     variants = ROUTES[key]
-    primary = variants[0]
+    primary = max(variants, key=lambda v: len(v.get("stops", [])))
     return {
         "route_id":      key,
         "name":          primary["name"],
@@ -76,18 +76,15 @@ def route_summary(key: str) -> dict:
 
 def route_detail(key: str) -> dict:
     variants = ROUTES[key]
+    primary = max(variants, key=lambda v: len(v.get("stops", [])))
+    stops = primary.get("stops", [])
     return {
         "route_id":  key,
+        "name":      primary["name"],
         "category":  get_category(key),
-        "variants": [
-            {
-                "variant_index": i,
-                "name":  v["name"],
-                "stops": v.get("stops", []),
-                "stops_count": len(v.get("stops", [])),
-            }
-            for i, v in enumerate(variants)
-        ],
+        "stops_count": len(stops),
+        "variants_count": len(variants),
+        "stops":     stops,
     }
 
 def haversine_m(lat1, lng1, lat2, lng2) -> float:
@@ -230,18 +227,15 @@ def get_route(route_id: str):
     return route_detail(route_id)
 
 @app.get("/routes/{route_id}/stops", tags=["Routes"])
-def get_route_stops(route_id: str, variant: int = 0):
+def get_route_stops(route_id: str):
     if route_id not in ROUTES:
         raise HTTPException(404, f"Route '{route_id}' not found.")
     variants = ROUTES[route_id]
-    if variant >= len(variants):
-        raise HTTPException(400, f"Variant {variant} doesn't exist. This route has {len(variants)} variant(s).")
-    v = variants[variant]
-    stops = v.get("stops", [])
+    primary = max(variants, key=lambda v: len(v.get("stops", [])))
+    stops = primary.get("stops", [])
     return {
         "route_id": route_id,
-        "variant":  variant,
-        "name":     v["name"],
+        "name":     primary["name"],
         "stops": [
             {
                 "sequence": i + 1,
