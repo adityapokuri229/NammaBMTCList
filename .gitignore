@@ -1,0 +1,4 @@
+My Data/
+__pycache__/
+*.pyc
+.env
