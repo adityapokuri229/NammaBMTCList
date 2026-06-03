@@ -2,3 +2,4 @@ My Data/
 __pycache__/
 *.pyc
 .env
+graphify-out/
